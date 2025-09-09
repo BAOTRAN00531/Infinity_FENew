@@ -1,0 +1,18 @@
+{
+  "files": {
+    "main.css": "/static/css/main.aa1b57e6.css",
+    "main.js": "/static/js/main.b354738b.js",
+    "static/js/453.ea1c70aa.chunk.js": "/static/js/453.ea1c70aa.chunk.js",
+    "static/media/vnpay-logo.png": "/static/media/vnpay-logo.43d066b3e62b5d825955.png",
+    "static/media/cod.png": "/static/media/cod.47dbc0b091d724fc32c5.png",
+    "static/media/momo-logo.png": "/static/media/momo-logo.105c1788d7f9c1acb0a1.png",
+    "index.html": "/index.html",
+    "main.aa1b57e6.css.map": "/static/css/main.aa1b57e6.css.map",
+    "main.b354738b.js.map": "/static/js/main.b354738b.js.map",
+    "453.ea1c70aa.chunk.js.map": "/static/js/453.ea1c70aa.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.aa1b57e6.css",
+    "static/js/main.b354738b.js"
+  ]
+}
