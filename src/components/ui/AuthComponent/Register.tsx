@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,30 +16,147 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import FooterForm from "../../auth-component/FormAuthComponent/FooterForm";
+import { register as registerApi, checkEmailExists, checkUsernameExists } from "@/api/authService";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
-  old: z.coerce.number().min(1).max(3), // z.coerce.number để parse từ input type="number"
-  name_7778000096: z.string(),
-  name_5894022056: z.string().min(1).max(10),
-  name_8727588435: z.string().min(8).max(36),
+  email: z.string().email("Email không hợp lệ"),
+  username: z.string().min(3, "Tên đăng nhập tối thiểu 3 ký tự").max(30, "Tối đa 30 ký tự"),
+  password: z.string().min(8, "Mật khẩu tối thiểu 8 ký tự").max(36, "Tối đa 36 ký tự"),
 });
 
 const Register = () => {
+  const navigate = useNavigate();
+  const [emailChecking, setEmailChecking] = useState(false);
+  const [usernameChecking, setUsernameChecking] = useState(false);
+  const [emailStatus, setEmailStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
+  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
+
   const form = useForm({
     resolver: zodResolver(formSchema),
+    mode: "onBlur",
+    defaultValues: { email: "", username: "", password: "" },
   });
 
-  const onSubmit = (values) => {
+  // Debounce function để tránh gọi API quá nhiều
+  const useDebounce = (value, delay) => {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+    
+    useEffect(() => {
+      const handler = setTimeout(() => {
+        setDebouncedValue(value);
+      }, delay);
+      
+      return () => {
+        clearTimeout(handler);
+      };
+    }, [value, delay]);
+    
+    return debouncedValue;
+  };
+
+  const watchedEmail = form.watch('email');
+  const watchedUsername = form.watch('username');
+  const debouncedEmail = useDebounce(watchedEmail, 500);
+  const debouncedUsername = useDebounce(watchedUsername, 500);
+
+  // Check email availability
+  useEffect(() => {
+    const checkEmail = async () => {
+      if (!debouncedEmail || !z.string().email().safeParse(debouncedEmail).success) {
+        setEmailStatus('idle');
+        return;
+      }
+
+      setEmailChecking(true);
+      setEmailStatus('checking');
+      
+      try {
+        const result = await checkEmailExists(debouncedEmail);
+        setEmailStatus(result.exists ? 'taken' : 'available');
+      } catch (error) {
+        console.error('Check email error:', error);
+        setEmailStatus('idle');
+      } finally {
+        setEmailChecking(false);
+      }
+    };
+
+    checkEmail();
+  }, [debouncedEmail]);
+
+  // Check username availability
+  useEffect(() => {
+    const checkUsername = async () => {
+      if (!debouncedUsername || debouncedUsername.length < 3) {
+        setUsernameStatus('idle');
+        return;
+      }
+
+      setUsernameChecking(true);
+      setUsernameStatus('checking');
+      
+      try {
+        const result = await checkUsernameExists(debouncedUsername);
+        setUsernameStatus(result.exists ? 'taken' : 'available');
+      } catch (error) {
+        console.error('Check username error:', error);
+        setUsernameStatus('idle');
+      } finally {
+        setUsernameChecking(false);
+      }
+    };
+
+    checkUsername();
+  }, [debouncedUsername]);
+
+  const onSubmit = async (values) => {
+    // Kiểm tra trước khi submit
+    if (emailStatus === 'taken') {
+      toast.error("Email đã được sử dụng. Vui lòng chọn email khác.");
+      return;
+    }
+    if (usernameStatus === 'taken') {
+      toast.error("Tên đăng nhập đã được sử dụng. Vui lòng chọn tên khác.");
+      return;
+    }
+    if (emailStatus === 'checking' || usernameStatus === 'checking') {
+      toast.error("Đang kiểm tra thông tin. Vui lòng đợi một chút.");
+      return;
+    }
+
     try {
-      console.log(values);
-      toast(
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      );
+      const payload = {
+        email: values.email,
+        username: values.username,
+        password: values.password,
+      };
+      const res = await registerApi(payload);
+      if (res.status >= 200 && res.status < 300) {
+        toast.success("Tạo tài khoản thành công! Vui lòng đăng nhập.");
+        navigate("/auth/login");
+        return;
+      }
+      toast.error("Tạo tài khoản thất bại. Vui lòng thử lại.");
     } catch (error) {
-      console.error("Form submission error", error);
-      toast.error("Failed to submit the form. Please try again.");
+      console.error("Register error", error);
+      const message = error?.response?.data?.message || "Tạo tài khoản thất bại. Vui lòng thử lại.";
+      toast.error(message);
+    }
+  };
+
+  // Helper function để render status indicator
+  const renderStatusIndicator = (status, checking) => {
+    if (checking) {
+      return <span className="text-blue-500 text-sm">Đang kiểm tra...</span>;
+    }
+    switch (status) {
+      case 'available':
+        return ;
+      case 'taken':
+        return <span className="text-red-500 text-sm"> Đã được sử dụng</span>;
+      default:
+        return null;
     }
   };
   return (
@@ -52,30 +169,11 @@ const Register = () => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="gap-8 flex flex-col"
         >
-          {/* Tuổi */}
-          <FormField
-            control={form.control}
-            name="old"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel></FormLabel>
-                <FormControl>
-                  <Input
-                    className="py-[10px] px-[14px] rounded-2xl h-[50px] border-2 border-slate-300 bg-background placeholder:text-slate-300"
-                    placeholder="Tuổi"
-                    type="number"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
+        
           {/* Email */}
           <FormField
             control={form.control}
-            name="name_7778000096"
+            name="email"
             render={({ field }) => (
               <FormItem>
                 <FormLabel></FormLabel>
@@ -84,37 +182,43 @@ const Register = () => {
                     className="py-[10px] px-[14px] rounded-2xl h-[50px] border-2 border-slate-300 bg-background placeholder:text-slate-300"
                     placeholder="Email"
                     type="email"
+                    autoComplete="email"
                     {...field}
                   />
                 </FormControl>
-                <FormMessage />
+                <div className="flex justify-between items-center">
+                  <FormMessage />
+                  {renderStatusIndicator(emailStatus, emailChecking)}
+                </div>
               </FormItem>
             )}
           />
-
-          {/* Số điện thoại */}
+          {/* Username */}
           <FormField
             control={form.control}
-            name="name_5894022056"
+            name="username"
             render={({ field }) => (
-              <FormItem className="flex flex-col items-start">
+              <FormItem>
                 <FormLabel></FormLabel>
-                <FormControl className="w-full">
+                <FormControl>
                   <Input
                     className="py-[10px] px-[14px] rounded-2xl h-[50px] border-2 border-slate-300 bg-background placeholder:text-slate-300"
-                    placeholder="Số điện thoại"
+                    placeholder="Tên đăng nhập"
+                    autoComplete="username"
                     {...field}
                   />
                 </FormControl>
-                <FormMessage />
+                <div className="flex justify-between items-center">
+                  <FormMessage />
+                  {renderStatusIndicator(usernameStatus, usernameChecking)}
+                </div>
               </FormItem>
             )}
           />
-
           {/* Mật khẩu */}
           <FormField
             control={form.control}
-            name="name_8727588435"
+            name="password"
             render={({ field }) => (
               <FormItem>
                 <FormLabel></FormLabel>
@@ -122,7 +226,8 @@ const Register = () => {
                   <Input
                     className="py-[10px] px-[14px] rounded-2xl h-[50px] border-2 border-slate-300 bg-background placeholder:text-slate-300"
                     placeholder="Mật khẩu"
-                    type="text"
+                    type="password"
+                    autoComplete="new-password"
                     {...field}
                   />
                 </FormControl>
@@ -131,8 +236,13 @@ const Register = () => {
             )}
           />
 
-          <Button type="primary" className="min-w-full">
-            Tạo tài khoản
+          <Button
+            type="primary"
+            className="min-w-full"
+            disabled={form.formState.isSubmitting}
+            onclick={form.handleSubmit(onSubmit)}
+          >
+            {form.formState.isSubmitting ? "Đang tạo tài khoản..." : "Tạo tài khoản"}
           </Button>
           <FooterForm />
         </form>
