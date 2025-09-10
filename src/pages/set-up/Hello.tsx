@@ -16,7 +16,7 @@ function Hello() {
         phá ngôn ngữ của bạn nhé!
       </h4>
 
-      <NavLink to="/chon-khoa-hoc">
+      <NavLink to="/select-language">
         <Button type="primary" className="px-12">
           Tiếp tục
         </Button>

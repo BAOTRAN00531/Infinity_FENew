@@ -22,9 +22,9 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Hello />}></Route>
-        <Route path="/chon-khoa-hoc" element={<SelectCourse />} />
+        <Route path="/select-language" element={<SelectCourse />} />
         <Route
-          path="/hoc"
+          path="/learn"
           element={
             <BaseLayout>
               <Learn />
