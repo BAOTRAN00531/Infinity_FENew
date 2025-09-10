@@ -1,0 +1,58 @@
+Project root: /mnt/data/Infinity_TS_Project/Infinity
+Converted 64 .jsx files to .tsx
+- src/App.jsx -> src/Apptsx
+- src/main.jsx -> src/maintsx
+- src/components/auth-component/FormAuthComponent/FooterForm.jsx -> src/components/auth-component/FormAuthComponent/FooterFormtsx
+- src/components/auth-component/HeaderAuthComponent/HeaderAuthComponent.jsx -> src/components/auth-component/HeaderAuthComponent/HeaderAuthComponenttsx
+- src/components/layouts/Logo.jsx -> src/components/layouts/Logotsx
+- src/components/layouts/base/Header.jsx -> src/components/layouts/base/Headertsx
+- src/components/layouts/base/Sidebar.jsx -> src/components/layouts/base/Sidebartsx
+- src/components/layouts/lesson/Footer.jsx -> src/components/layouts/lesson/Footertsx
+- src/components/layouts/lesson/Header.jsx -> src/components/layouts/lesson/Headertsx
+- src/components/layouts/lesson/ProgressBar.jsx -> src/components/layouts/lesson/ProgressBartsx
+- src/components/page-component/base/NextLessonBox.jsx -> src/components/page-component/base/NextLessonBoxtsx
+- src/components/page-component/base/TrialBox.jsx -> src/components/page-component/base/TrialBoxtsx
+- src/components/page-component/lesson/quizz/AudioQuizz.jsx -> src/components/page-component/lesson/quizz/AudioQuizztsx
+- src/components/page-component/lesson/quizz/FillInTheBlank.jsx -> src/components/page-component/lesson/quizz/FillInTheBlanktsx
+- src/components/page-component/lesson/quizz/Matching.jsx -> src/components/page-component/lesson/quizz/Matchingtsx
+- src/components/page-component/lesson/quizz/MultipleChoice.jsx -> src/components/page-component/lesson/quizz/MultipleChoicetsx
+- src/components/page-component/lesson/quizz/QuizzResult.jsx -> src/components/page-component/lesson/quizz/QuizzResulttsx
+- src/components/page-component/lesson/quizz/Rearrange.jsx -> src/components/page-component/lesson/quizz/Rearrangetsx
+- src/components/page-component/lesson/quizz/SingleImage.jsx -> src/components/page-component/lesson/quizz/SingleImagetsx
+- src/components/page-component/lesson/quizz/SingleText.jsx -> src/components/page-component/lesson/quizz/SingleTexttsx
+- src/components/page-component/set-up/SetUpHeader.jsx -> src/components/page-component/set-up/SetUpHeadertsx
+- src/components/reuseables/Button.jsx -> src/components/reuseables/Buttontsx
+- src/components/reuseables/Gradient.jsx -> src/components/reuseables/Gradienttsx
+- src/components/reuseables/Input.jsx -> src/components/reuseables/Inputtsx
+- src/components/reuseables/LessonCircleProgress.jsx -> src/components/reuseables/LessonCircleProgresstsx
+- src/components/reuseables/Notification.jsx -> src/components/reuseables/Notificationtsx
+- src/components/ui/button.jsx -> src/components/ui/buttontsx
+- src/components/ui/calendar.jsx -> src/components/ui/calendartsx
+- src/components/ui/form.jsx -> src/components/ui/formtsx
+- src/components/ui/input-otp.jsx -> src/components/ui/input-otptsx
+- src/components/ui/input.jsx -> src/components/ui/inputtsx
+- src/components/ui/label.jsx -> src/components/ui/labeltsx
+- src/components/ui/popover.jsx -> src/components/ui/popovertsx
+- src/components/ui/select.jsx -> src/components/ui/selecttsx
+- src/components/ui/textarea.jsx -> src/components/ui/textareatsx
+- src/components/ui/AuthComponent/AuthStep2.jsx -> src/components/ui/AuthComponent/AuthStep2tsx
+- src/components/ui/AuthComponent/ForgotPassword.jsx -> src/components/ui/AuthComponent/ForgotPasswordtsx
+- src/components/ui/AuthComponent/Login.jsx -> src/components/ui/AuthComponent/Logintsx
+- src/components/ui/AuthComponent/Register.jsx -> src/components/ui/AuthComponent/Registertsx
+- src/components/ui/AuthComponent/ResetPassword.jsx -> src/components/ui/AuthComponent/ResetPasswordtsx
+- src/components/ui/AuthComponent/ToastAuthComponent.jsx -> src/components/ui/AuthComponent/ToastAuthComponenttsx
+- src/components/ui/HeaderComponent/HeaderComponent.jsx -> src/components/ui/HeaderComponent/HeaderComponenttsx
+- src/components/ui/TrialComponent/MainIndexTrialComponent.jsx -> src/components/ui/TrialComponent/MainIndexTrialComponenttsx
+- src/components/ui/TrialComponent/PaymentComponent.jsx -> src/components/ui/TrialComponent/PaymentComponenttsx
+- src/components/ui/TrialComponent/PlanTrialComponent.jsx -> src/components/ui/TrialComponent/PlanTrialComponenttsx
+- src/components/ui/TrialComponent/RemiderComponent.jsx -> src/components/ui/TrialComponent/RemiderComponenttsx
+- src/components/ui/TrialComponent/TrialComponent.jsx -> src/components/ui/TrialComponent/TrialComponenttsx
+- src/contexts/AuthProvider.jsx -> src/contexts/AuthProvidertsx
+- src/contexts/QuizzContext.jsx -> src/contexts/QuizzContexttsx
+- src/hooks/useAuthComponent.jsx -> src/hooks/useAuthComponenttsx
+...and 14 more.
+
+Updated import references in 0 files.
+tsconfig.json updated with relaxed settings.
+types.d.ts written for asset modules.
+package.json patched.
