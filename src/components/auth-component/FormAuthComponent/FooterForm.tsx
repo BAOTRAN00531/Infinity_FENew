@@ -40,8 +40,8 @@ const FooterForm = () => {
                 y2="22.4378"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stop-color="#18ACFE" />
-                <stop offset="1" stop-color="#0163E0" />
+                <stop stopColor="#18ACFE" />
+                <stop offset="1" stopColor="#0163E0" />
               </linearGradient>
             </defs>
           </svg>
@@ -58,28 +58,28 @@ const FooterForm = () => {
             viewBox="0 0 22 22"
             fill="none"
           >
-            <g clip-path="url(#clip0_74_851)">
+            <g clipPath="url(#clip0_74_851)">
               <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
+                fillRule="evenodd"
+                clipRule="evenodd"
                 d="M5.01847 11.0003C5.01847 10.3334 5.12922 9.69408 5.3269 9.09442L1.8668 6.45215C1.19244 7.82135 0.8125 9.36415 0.8125 11.0003C0.8125 12.635 1.19197 14.1769 1.86539 15.5451L5.32363 12.8977C5.12782 12.3009 5.01847 11.6639 5.01847 11.0003Z"
                 fill="#FBBC05"
               />
               <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
+                fillRule="evenodd"
+                clipRule="evenodd"
                 d="M11.0941 4.9334C12.5429 4.9334 13.8514 5.44673 14.8795 6.28673L17.8704 3.30007C16.0478 1.7134 13.7112 0.733398 11.0941 0.733398C7.03118 0.733398 3.53929 3.05693 1.86719 6.45193L5.3273 9.0942C6.12456 6.67407 8.39718 4.9334 11.0941 4.9334Z"
                 fill="#EB4335"
               />
               <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
+                fillRule="evenodd"
+                clipRule="evenodd"
                 d="M11.0941 17.0666C8.39718 17.0666 6.12456 15.3259 5.3273 12.9058L1.86719 15.5476C3.53929 18.943 7.03118 21.2666 11.0941 21.2666C13.6018 21.2666 15.996 20.3762 17.7928 18.7078L14.5085 16.1687C13.5817 16.7525 12.4148 17.0666 11.0941 17.0666Z"
                 fill="#34A853"
               />
               <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
+                fillRule="evenodd"
+                clipRule="evenodd"
                 d="M20.9077 11C20.9077 10.3933 20.8142 9.73997 20.674 9.1333H11.0938V13.1H16.6082C16.3325 14.4524 15.582 15.4921 14.5081 16.1688L17.7925 18.7079C19.68 16.956 20.9077 14.3464 20.9077 11Z"
                 fill="#4285F4"
               />

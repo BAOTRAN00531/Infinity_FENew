@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "../input";
 import FooterForm from "../../auth-component/FormAuthComponent/FooterForm";
+import { login } from "@/api/authService";
 
 const formSchema = z.object({
   name_7276315374: z.string().min(1, "Vui lòng nhập email hoặc số điện thoại"),
@@ -22,23 +23,41 @@ const formSchema = z.object({
 });
 
 export default function Login() {
+  const navigate = useNavigate();
   const form = useForm({
     resolver: zodResolver(formSchema),
     mode: "onBlur",
+    defaultValues: {
+      name_7276315374: "",
+      name_4761952747: "",
+    },
   });
 
-  function onSubmit(values) {
+  const onSubmit = async (values) => {
     try {
-      toast(
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      );
+      const credentials = {
+        username: values.name_7276315374,
+        password: values.name_4761952747,
+      };
+
+      const res = await login(credentials);
+
+      if (res?.access_token) {
+        localStorage.setItem("access_token", res.access_token);
+      }
+
+      if (res?.userp) {
+        localStorage.setItem("user", JSON.stringify(res.userp));
+      }
+
+      toast.success("Đăng nhập thành công!");
+      navigate("/");
     } catch (error) {
-      console.error("Form submission error", error);
-      toast.error("Failed to submit the form. Please try again.");
+      console.error("Login error", error);
+      const message = error?.response?.data?.message || "Đăng nhập thất bại. Vui lòng thử lại.";
+      toast.error(message);
     }
-  }
+  };
 
   return (
     <div className="flex flex-col gap-11">
@@ -64,6 +83,7 @@ export default function Login() {
                     }
                     placeholder="Email hoặc số điện thoại"
                     type="text"
+                    autoComplete="username"
                     {...field}
                   />
                 </FormControl>
@@ -86,6 +106,7 @@ export default function Login() {
                     }
                     type={"password"}
                     placeholder="Mật khẩu"
+                    autoComplete="current-password"
                     {...field}
                   />
                 </FormControl>
@@ -99,8 +120,13 @@ export default function Login() {
               Bấm vào đây
             </Link>
           </span>
-          <Button type="primary" className="min-w-full">
-            Đăng nhập
+          <Button
+            type="primary"
+            className="min-w-full"
+            disabled={form.formState.isSubmitting}
+            onclick={form.handleSubmit(onSubmit)}
+          >
+            {form.formState.isSubmitting ? "Đang đăng nhập..." : "Đăng nhập"}
           </Button>
           <FooterForm />
         </form>
