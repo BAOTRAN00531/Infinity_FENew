@@ -27,6 +27,7 @@ import MainIndexTrialComponent from "./components/ui/TrialComponent/MainIndexTri
 import RemiderComponent from "./components/ui/TrialComponent/RemiderComponent";
 import PlanTrialComponent from "./components/ui/TrialComponent/PlanTrialComponent";
 import PaymentComponent from "./components/ui/TrialComponent/PaymentComponent";
+import OAuthSuccess from "./pages/OAuthSuccess";
 
 function App() {
     return (
