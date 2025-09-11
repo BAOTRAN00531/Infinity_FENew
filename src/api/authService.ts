@@ -48,6 +48,19 @@ export const checkUsernameExists = async (username: string): Promise<{ exists: b
     return response.data;
 };
 
+// OAuth helpers: chuyển hướng sang endpoint OAuth của backend
+export const startGoogleOAuth = () => {
+    const isDev = import.meta.env.DEV;
+    const base = isDev ? '/api' : (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080');
+    window.location.href = `${base}/oauth2/authorization/google`;
+};
+
+export const startFacebookOAuth = () => {
+    const isDev = import.meta.env.DEV;
+    const base = isDev ? '/api' : (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080');
+    window.location.href = `${base}/oauth2/authorization/facebook`;
+};
+
 export async function refreshToken() {
     const res = await axios.post("/api/refresh", null, {
         withCredentials: true // để gửi cookie refresh_token

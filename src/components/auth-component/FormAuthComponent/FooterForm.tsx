@@ -2,6 +2,7 @@
 import React from "react";
 import "./FooterFormComponent/FooterForm.scss";
 import Button from "../../reuseables/Button";
+import { startFacebookOAuth, startGoogleOAuth } from "@/api/authService";
 
 const FooterForm = () => {
     return (
