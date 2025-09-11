@@ -60,12 +60,17 @@ export default function Login() {
                     <FormField
                         control={form.control}
                         name="name_7276315374"
-                        render={({ field }) => (
+                        render={({ field, fieldState }) => (
                             <FormItem>
                                 <FormLabel></FormLabel>
                                 <FormControl>
                                     <Input
-                                        className="py-[10px] px-[14px] rounded-2xl h-[50px] border-2 border-slate-300 bg-background placeholder:text-slate-300"
+                                        aria-invalid={!!fieldState.error}
+                                        className={`py-[10px] px-[14px] rounded-2xl h-[50px] border-2 bg-background placeholder:text-slate-300
+                      focus-visible:outline-none focus-visible:ring-2
+                      ${fieldState.error
+                                            ? "border-red-500 focus-visible:ring-red-500"
+                                            : "border-slate-300 focus-visible:ring-primary/40"}`}
                                         placeholder="Email hoặc số điện thoại"
                                         type="text"
                                         autoComplete="username"
@@ -81,13 +86,18 @@ export default function Login() {
                     <FormField
                         control={form.control}
                         name="name_4761952747"
-                        render={({ field }) => (
+                        render={({ field, fieldState }) => (
                             <FormItem>
                                 <FormLabel></FormLabel>
                                 <FormControl>
                                     <div className="relative">
                                         <Input
-                                            className="py-[10px] px-[14px] rounded-2xl h-[50px] border-2 border-slate-300 bg-background placeholder:text-slate-300 pr-16"
+                                            aria-invalid={!!fieldState.error}
+                                            className={`py-[10px] px-[14px] rounded-2xl h-[50px] border-2 bg-background placeholder:text-slate-300 pr-16
+                        focus-visible:outline-none focus-visible:ring-2
+                        ${fieldState.error
+                                                ? "border-red-500 focus-visible:ring-red-500"
+                                                : "border-slate-300 focus-visible:ring-primary/40"}`}
                                             type={showPassword ? "text" : "password"}
                                             placeholder="Mật khẩu"
                                             autoComplete="current-password"
@@ -96,8 +106,7 @@ export default function Login() {
 
                                         {pwValue.length === 0 ? (
                                             <Link
-                                                // dùng đường dẫn của bản (1) để đồng bộ router cũ
-                                                to="/auth/forgot-password"
+                                                to="/auth/forgot-password"  // sửa theo route bạn đang dùng
                                                 className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 hover:text-primary"
                                             >
                                                 QUÊN?
