@@ -1,6 +1,16 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-
+@keyframes shooting {
+    0% { transform: translateX(0) translateY(0) rotate(45deg); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: translateX(120vw) translateY(-60vh) rotate(45deg); opacity: 0; }
+}
+.shooting-star{
+    position:absolute; top:70%; left:-20vw; width:120px; height:2px;
+    background:linear-gradient(90deg, rgba(255,255,255,0.95), rgba(255,255,255,0));
+    filter: drop-shadow(0 0 6px rgba(255,255,255,0.7));
+    animation: shooting 2.8s linear infinite;
+}
 
 @custom-variant dark (&:is(.dark *));
 

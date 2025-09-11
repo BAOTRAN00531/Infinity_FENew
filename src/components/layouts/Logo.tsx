@@ -1,10 +1,11 @@
-// @ts-nocheck
+import {NavLink} from "react-router-dom";
+
 function Logo() {
-  return (
-    <a href="/" className="flex-center">
-      <img src="/images/infinity.png" alt="Infinity Official Logo" />
-    </a>
-  );
+    return (
+        <NavLink to="/">
+            <img src="/images/infinity.png" alt="Infinity Logo"/>
+        </NavLink>
+    );
 }
 
 export default Logo;
