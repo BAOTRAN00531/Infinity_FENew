@@ -21,13 +21,13 @@ import ForgotPassword from "./components/ui/AuthComponent/ForgotPassword";
 import ResetPassword from "./components/ui/AuthComponent/ResetPassword";
 import AuthStep2 from "./components/ui/AuthComponent/AuthStep2";
 import NotFoundOverlay from "./components/ui/NotFoundOverlay";
+import OAuthSuccess from "./pages/OAuthSuccess";
 
 import TrialComponent from "./components/ui/TrialComponent/TrialComponent";
 import MainIndexTrialComponent from "./components/ui/TrialComponent/MainIndexTrialComponent";
 import RemiderComponent from "./components/ui/TrialComponent/RemiderComponent";
 import PlanTrialComponent from "./components/ui/TrialComponent/PlanTrialComponent";
 import PaymentComponent from "./components/ui/TrialComponent/PaymentComponent";
-import OAuthSuccess from "./pages/OAuthSuccess";
 
 function App() {
     return (
@@ -35,6 +35,8 @@ function App() {
             {/* Public */}
             <Route path="/" element={<Hello/>}/>
             <Route path="/select-language" element={<SelectCourse/>}/>
+            {/* OAuth callback */}
+            <Route path="/oauth2/success" element={<OAuthSuccess/>}/>
 
             {/* Học bài/lesson rời */}
             <Route path="/hoc/bai-hoc/:slug" element={<Lesson/>}/>
