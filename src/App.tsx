@@ -1,6 +1,8 @@
 // App.tsx
 // @ts-nocheck
 import { Route, Routes } from "react-router-dom";
+import { Toaster } from "sonner";
+
 import Hello from "./pages/set-up/Hello";
 import SelectCourse from "./pages/set-up/SelectCourse";
 
@@ -23,11 +25,17 @@ import AuthStep2 from "./components/ui/AuthComponent/AuthStep2";
 import NotFoundOverlay from "./components/ui/NotFoundOverlay";
 import OAuthSuccess from "./pages/OAuthSuccess";
 
+// Trial
 import TrialComponent from "./components/ui/TrialComponent/TrialComponent";
 import MainIndexTrialComponent from "./components/ui/TrialComponent/MainIndexTrialComponent";
 import RemiderComponent from "./components/ui/TrialComponent/RemiderComponent";
 import PlanTrialComponent from "./components/ui/TrialComponent/PlanTrialComponent";
 import PaymentComponent from "./components/ui/TrialComponent/PaymentComponent";
+
+// ✅ 3 trang verify (đặt theo path bạn đã dùng ở các file)
+import VerifyEmail from "./pages/auth/VerifyEmail";
+import VerifySuccess from "./pages/auth/VerifySuccess";
+import VerifyConfirmation from "./pages/auth/VerifyConfirmation";
 
 // 👇 Import LoadingIndicator
 import LoadingIndicator from "./components/LoadingIndicator";
@@ -37,6 +45,9 @@ function App() {
         <>
             {/* LoadingIndicator luôn nằm trên toàn bộ app */}
             <LoadingIndicator />
+
+            {/* ✅ Toaster dùng chung cho toàn app (sonner) */}
+            <Toaster position="top-right" richColors />
 
             <Routes>
                 {/* Public */}
@@ -65,6 +76,11 @@ function App() {
                     <Route path="/plan-trial" element={<PlanTrialComponent />} />
                     <Route path="/payment" element={<PaymentComponent />} />
                 </Route>
+
+                {/* ✅ Email verify flow (độc lập, không lồng dưới /auth) */}
+                <Route path="/verify-confirmation" element={<VerifyConfirmation />} />
+                <Route path="/verify-email" element={<VerifyEmail />} />
+                <Route path="/verify-success" element={<VerifySuccess />} />
 
                 {/* Auth */}
                 <Route path="/auth" element={<Auth />}>

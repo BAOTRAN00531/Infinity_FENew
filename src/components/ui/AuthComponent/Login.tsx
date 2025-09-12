@@ -10,7 +10,7 @@ import Button from "../../reuseables/Button";
 import {
     Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
 } from "@/components/ui/form";
-import { Input } from "../input";
+import { Input } from "@/components/ui/input"; // đồng bộ import
 import FooterForm from "../../auth-component/FormAuthComponent/FooterForm";
 import { login } from "@/api/authService";
 
@@ -68,9 +68,7 @@ export default function Login() {
                                         aria-invalid={!!fieldState.error}
                                         className={`py-[10px] px-[14px] rounded-2xl h-[50px] border-2 bg-background placeholder:text-slate-300
                       focus-visible:outline-none focus-visible:ring-2
-                      ${fieldState.error
-                                            ? "border-red-500 focus-visible:ring-red-500"
-                                            : "border-slate-300 focus-visible:ring-primary/40"}`}
+                      ${fieldState.error ? "border-red-500 focus-visible:ring-red-500" : "border-slate-300 focus-visible:ring-primary/40"}`}
                                         placeholder="Email hoặc số điện thoại"
                                         type="text"
                                         autoComplete="username"
@@ -95,9 +93,7 @@ export default function Login() {
                                             aria-invalid={!!fieldState.error}
                                             className={`py-[10px] px-[14px] rounded-2xl h-[50px] border-2 bg-background placeholder:text-slate-300 pr-16
                         focus-visible:outline-none focus-visible:ring-2
-                        ${fieldState.error
-                                                ? "border-red-500 focus-visible:ring-red-500"
-                                                : "border-slate-300 focus-visible:ring-primary/40"}`}
+                        ${fieldState.error ? "border-red-500 focus-visible:ring-red-500" : "border-slate-300 focus-visible:ring-primary/40"}`}
                                             type={showPassword ? "text" : "password"}
                                             placeholder="Mật khẩu"
                                             autoComplete="current-password"
@@ -106,7 +102,7 @@ export default function Login() {
 
                                         {pwValue.length === 0 ? (
                                             <Link
-                                                to="/auth/forgot-password"  // sửa theo route bạn đang dùng
+                                                to="/auth/forgot-password"
                                                 className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 hover:text-primary"
                                             >
                                                 QUÊN?

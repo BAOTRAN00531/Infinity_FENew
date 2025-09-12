@@ -26,14 +26,8 @@ import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
     email: z.string().email("Email không hợp lệ"),
-    username: z
-        .string()
-        .min(3, "Tên đăng nhập tối thiểu 3 ký tự")
-        .max(30, "Tối đa 30 ký tự"),
-    password: z
-        .string()
-        .min(8, "Mật khẩu tối thiểu 8 ký tự")
-        .max(36, "Tối đa 36 ký tự"),
+    username: z.string().min(3, "Tên đăng nhập tối thiểu 3 ký tự").max(30, "Tối đa 30 ký tự"),
+    password: z.string().min(8, "Mật khẩu tối thiểu 8 ký tự").max(36, "Tối đa 36 ký tự"),
 });
 
 const Register = () => {
@@ -41,12 +35,8 @@ const Register = () => {
 
     const [emailChecking, setEmailChecking] = useState(false);
     const [usernameChecking, setUsernameChecking] = useState(false);
-    const [emailStatus, setEmailStatus] = useState<
-        "idle" | "checking" | "available" | "taken"
-    >("idle");
-    const [usernameStatus, setUsernameStatus] = useState<
-        "idle" | "checking" | "available" | "taken"
-    >("idle");
+    const [emailStatus, setEmailStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
+    const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
 
     // Ẩn/hiện mật khẩu
     const [showPassword, setShowPassword] = useState(false);
@@ -139,16 +129,15 @@ const Register = () => {
             };
             const res = await registerApi(payload);
             if (res?.status >= 200 && res?.status < 300) {
-                toast.success("Tạo tài khoản thành công! Vui lòng đăng nhập.");
-                navigate("/auth/login");
+                toast.success("Tạo tài khoản thành công! Vui lòng kiểm tra email để xác nhận.");
+                // điều hướng đến trang hướng dẫn kiểm tra email
+                navigate("/verify-confirmation");
                 return;
             }
             toast.error("Tạo tài khoản thất bại. Vui lòng thử lại.");
         } catch (error) {
             console.error("Register error", error);
-            const message =
-                error?.response?.data?.message ||
-                "Tạo tài khoản thất bại. Vui lòng thử lại.";
+            const message = error?.response?.data?.message || "Tạo tài khoản thất bại. Vui lòng thử lại.";
             toast.error(message);
         }
     };
@@ -165,7 +154,6 @@ const Register = () => {
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="gap-0 flex flex-col">
-
                     {/* Email */}
                     <FormField
                         control={form.control}
@@ -178,9 +166,7 @@ const Register = () => {
                                         aria-invalid={!!fieldState.error}
                                         className={`py-[10px] px-[14px] rounded-2xl h-[50px] border-2 bg-background placeholder:text-slate-300
                       focus-visible:outline-none focus-visible:ring-2
-                      ${fieldState.error
-                                            ? "border-red-500 focus-visible:ring-red-500"
-                                            : "border-slate-300 focus-visible:ring-primary/40"}`}
+                      ${fieldState.error ? "border-red-500 focus-visible:ring-red-500" : "border-slate-300 focus-visible:ring-primary/40"}`}
                                         placeholder="Email"
                                         type="email"
                                         autoComplete="email"
@@ -207,9 +193,7 @@ const Register = () => {
                                         aria-invalid={!!fieldState.error}
                                         className={`py-[10px] px-[14px] rounded-2xl h-[50px] border-2 bg-background placeholder:text-slate-300
                       focus-visible:outline-none focus-visible:ring-2
-                      ${fieldState.error
-                                            ? "border-red-500 focus-visible:ring-red-500"
-                                            : "border-slate-300 focus-visible:ring-primary/40"}`}
+                      ${fieldState.error ? "border-red-500 focus-visible:ring-red-500" : "border-slate-300 focus-visible:ring-primary/40"}`}
                                         placeholder="Tên đăng nhập"
                                         autoComplete="username"
                                         {...field}
@@ -236,9 +220,7 @@ const Register = () => {
                                             aria-invalid={!!fieldState.error}
                                             className={`py-[10px] px-[14px] rounded-2xl h-[50px] border-2 bg-background placeholder:text-slate-300 pr-16
                         focus-visible:outline-none focus-visible:ring-2
-                        ${fieldState.error
-                                                ? "border-red-500 focus-visible:ring-red-500"
-                                                : "border-slate-300 focus-visible:ring-primary/40"}`}
+                        ${fieldState.error ? "border-red-500 focus-visible:ring-red-500" : "border-slate-300 focus-visible:ring-primary/40"}`}
                                             placeholder="Mật khẩu"
                                             type={showPassword ? "text" : "password"}
                                             autoComplete="new-password"
