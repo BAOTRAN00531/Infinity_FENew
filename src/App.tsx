@@ -1,6 +1,6 @@
 // App.tsx
 // @ts-nocheck
-import {Route, Routes} from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Hello from "./pages/set-up/Hello";
 import SelectCourse from "./pages/set-up/SelectCourse";
 
@@ -29,50 +29,58 @@ import RemiderComponent from "./components/ui/TrialComponent/RemiderComponent";
 import PlanTrialComponent from "./components/ui/TrialComponent/PlanTrialComponent";
 import PaymentComponent from "./components/ui/TrialComponent/PaymentComponent";
 
+// 👇 Import LoadingIndicator
+import LoadingIndicator from "./components/LoadingIndicator";
+
 function App() {
     return (
-        <Routes>
-            {/* Public */}
-            <Route path="/" element={<Hello/>}/>
-            <Route path="/select-language" element={<SelectCourse/>}/>
-            {/* OAuth callback */}
-            <Route path="/oauth2/success" element={<OAuthSuccess/>}/>
+        <>
+            {/* LoadingIndicator luôn nằm trên toàn bộ app */}
+            <LoadingIndicator />
 
-            {/* Học bài/lesson rời */}
-            <Route path="/hoc/bai-hoc/:slug" element={<Lesson/>}/>
-            <Route path="/hoc/bai-hoc/:slug/ket-qua" element={<QuizzResult/>}/>
+            <Routes>
+                {/* Public */}
+                <Route path="/" element={<Hello />} />
+                <Route path="/select-language" element={<SelectCourse />} />
+                {/* OAuth callback */}
+                <Route path="/oauth2/success" element={<OAuthSuccess />} />
 
-            {/* Nhóm dùng BaseLayout */}
-            <Route element={<BaseLayout/>}>
-                <Route path="/hoc" element={<Learn/>}/>
-                <Route path="/phat-am" element={<Pronun/>}/>
-                <Route path="/hoc-phan" element={<StudyPart/>}/>
-                <Route path="/khoa-hoc" element={<Courses/>}/>
-                <Route path="/ho-so" element={<Profile/>}/>
-            </Route>
+                {/* Học bài/lesson rời */}
+                <Route path="/hoc/bai-hoc/:slug" element={<Lesson />} />
+                <Route path="/hoc/bai-hoc/:slug/ket-qua" element={<QuizzResult />} />
 
-            {/* Nhóm Trial */}
-            <Route element={<TrialComponent/>}>
-                <Route path="/remider" element={<RemiderComponent/>}/>
-                <Route path="/trial" element={<MainIndexTrialComponent/>}/>
-                <Route path="/plan-trial" element={<PlanTrialComponent/>}/>
-                <Route path="/payment" element={<PaymentComponent/>}/>
-            </Route>
+                {/* Nhóm dùng BaseLayout */}
+                <Route element={<BaseLayout />}>
+                    <Route path="/hoc" element={<Learn />} />
+                    <Route path="/phat-am" element={<Pronun />} />
+                    <Route path="/hoc-phan" element={<StudyPart />} />
+                    <Route path="/khoa-hoc" element={<Courses />} />
+                    <Route path="/ho-so" element={<Profile />} />
+                </Route>
 
-            {/* Auth as routes (thay vì /auth/:action) */}
-            <Route path="/auth" element={<Auth/>}>
-                <Route index element={<Login/>}/> {/* /auth */}
-                <Route path="login" element={<Login/>}/> {/* /auth/login */}
-                <Route path="register" element={<Register/>}/> {/* /auth/register */}
-                <Route path="forgot-password" element={<ForgotPassword/>}/>
-                <Route path="reset-password" element={<ResetPassword/>}/>
-                <Route path="confirm-login" element={<AuthStep2/>}/>
-                <Route path="*" element={<NotFoundOverlay/>}/>
-            </Route>
+                {/* Nhóm Trial */}
+                <Route element={<TrialComponent />}>
+                    <Route path="/remider" element={<RemiderComponent />} />
+                    <Route path="/trial" element={<MainIndexTrialComponent />} />
+                    <Route path="/plan-trial" element={<PlanTrialComponent />} />
+                    <Route path="/payment" element={<PaymentComponent />} />
+                </Route>
 
-            {/* Fallback 404 toàn site */}
-            <Route path="*" element={<NotFoundOverlay/>}/>
-        </Routes>
+                {/* Auth */}
+                <Route path="/auth" element={<Auth />}>
+                    <Route index element={<Login />} />
+                    <Route path="login" element={<Login />} />
+                    <Route path="register" element={<Register />} />
+                    <Route path="forgot-password" element={<ForgotPassword />} />
+                    <Route path="reset-password" element={<ResetPassword />} />
+                    <Route path="confirm-login" element={<AuthStep2 />} />
+                    <Route path="*" element={<NotFoundOverlay />} />
+                </Route>
+
+                {/* Fallback 404 */}
+                <Route path="*" element={<NotFoundOverlay />} />
+            </Routes>
+        </>
     );
 }
 
