@@ -4,7 +4,6 @@ import { useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { FaSnowflake } from "react-icons/fa";
 
-// ✅ Ép kiểu icon rõ ràng
 const SnowflakeIcon = FaSnowflake as React.FC<React.SVGProps<SVGSVGElement>>;
 
 export default function LoadingIndicator() {
