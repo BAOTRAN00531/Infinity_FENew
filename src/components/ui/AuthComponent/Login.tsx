@@ -1,11 +1,12 @@
 // @ts-nocheck
 import { toast } from "sonner";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { jwtDecode } from "jwt-decode";
 import Button from "../../reuseables/Button";
 import {
     Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
@@ -13,6 +14,8 @@ import {
 import { Input } from "@/components/ui/input"; // đồng bộ import
 import FooterForm from "../../auth-component/FormAuthComponent/FooterForm";
 import { login } from "@/api/authService";
+import { UserLogin, ResLoginDTO } from "@/api/types";
+import { getRedirectPathByRole, clearAuthData } from "@/utils/authUtils";
 
 const formSchema = z.object({
     name_7276315374: z.string().min(1, "Vui lòng nhập email hoặc số điện thoại"),
@@ -21,6 +24,7 @@ const formSchema = z.object({
 
 export default function Login() {
     const navigate = useNavigate();
+    const location = useLocation();
     const form = useForm({
         resolver: zodResolver(formSchema),
         mode: "onBlur",
@@ -31,23 +35,56 @@ export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const pwValue = form.watch("name_4761952747") || "";
 
+    // Lấy trang đích từ state hoặc từ query params
+    const from = location.state?.from?.pathname || new URLSearchParams(location.search).get('redirect') || null;
+
     const onSubmit = async (values) => {
         try {
             const credentials = {
                 username: values.name_7276315374,
                 password: values.name_4761952747,
             };
-            const res = await login(credentials);
+            
+            const res: ResLoginDTO = await login(credentials);
+            
+            // Decode token để lấy role
+            const decodedToken: any = jwtDecode(res.access_token);
+            const role: string = decodedToken.role;
 
-            if (res?.access_token) localStorage.setItem("access_token", res.access_token);
-            if (res?.userp) localStorage.setItem("user", JSON.stringify(res.userp));
+            // Tạo user object với role
+            const userWithRole: UserLogin = {
+                ...res.userp,
+                role,
+            };
+
+            // Lưu token và user data vào sessionStorage
+            sessionStorage.setItem("access_token", res.access_token);
+            sessionStorage.setItem("user", JSON.stringify(userWithRole));
+
+            console.log("Login successful:", { role, user: userWithRole });
 
             toast.success("Đăng nhập thành công!");
-            navigate("/");
+
+            // Xác định trang đích dựa trên role
+            let redirectPath = from || getRedirectPathByRole(role);
+
+            // Đảm bảo admin không bị redirect đến trang student và ngược lại
+            if (role === 'ROLE_ADMIN' && !redirectPath.startsWith('/admin')) {
+                redirectPath = '/admin/dashboard';
+            } else if ((role === 'ROLE_STUDENT' || role === 'ROLE_USER') && redirectPath.startsWith('/admin')) {
+                redirectPath = '/student/dashboard';
+            }
+
+            // Chuyển hướng
+            navigate(redirectPath, { replace: true });
+            
         } catch (error) {
             console.error("Login error", error);
-            const message = error?.response?.data?.message || "Đăng nhập thất bại. Vui lòng thử lại.";
+            const message = error?.response?.data?.message || "Tên đăng nhập hoặc mật khẩu sai. Vui lòng thử lại.";
             toast.error(message);
+            
+            // Xóa dữ liệu auth cũ nếu có lỗi
+            clearAuthData();
         }
     };
 
