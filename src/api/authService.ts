@@ -19,12 +19,7 @@ export const logout = async (): Promise<void> => {
 };
 
 /** Forgot Password Flow */
-export const sendResetPasswordEmail = async (
-    email: string
-): Promise<{ status: number; data?: any }> => {
-    const response = await api.post('/auth/forgot-password', { email });
-    return { status: response.status, data: response.data };
-};
+
 
 export const verifyOTP = async (
     email: string,
@@ -34,14 +29,7 @@ export const verifyOTP = async (
     return { status: response.status, data: response.data };
 };
 
-export const resetPassword = async (
-    email: string,
-    otp: string,
-    newPassword: string
-): Promise<{ status: number; data?: any }> => {
-    const response = await api.post('/auth/reset-password', { email, otp, newPassword });
-    return { status: response.status, data: response.data };
-};
+
 
 /** Check availability (public) — tránh redirect khi 401 ngoài ý muốn */
 export const checkEmailExists = async (
@@ -55,16 +43,8 @@ export const checkEmailExists = async (
     return response.data;
 };
 
-export const checkEmailForReset = async (
-    email: string
-): Promise<{ exists: boolean; message?: string }> => {
-    const response = await api.get(`/auth/check-email-for-reset`, {
-        params: { email },
-        // @ts-expect-error
-        skipAuthRedirect: true,
-    });
-    return response.data;
-};
+
+
 
 export const checkUsernameExists = async (
     username: string
@@ -89,6 +69,35 @@ export const startFacebookOAuth = () => {
     const base = isDev ? '/api' : (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080');
     window.location.href = `${base}/oauth2/authorization/facebook`;
 };
+///////////////////////////////
+export const sendResetPasswordEmail = async (email: string) => {
+    const res = await api.post('/auth/forgot-password', { email });
+    return { status: res.status, data: res.data };
+  };
+  
+  // 1) Chỉ để check trong UI khi người dùng đang nhập (debounce)
+  export const validateOtp = async (email: string, otp: string) => {
+    const res = await api.post('/auth/validate-otp', { email, otp });
+    return { status: res.status, data: res.data }; // data.valid: boolean
+  };
+  
+  // 2) Xác nhận OTP (bước chuyển sang reset)
+  export const confirmOTP = async (email: string, otp: string) => {
+    const res = await api.post('/auth/confirm-otp', { email, otp });
+    return { status: res.status, data: res.data };
+  };
+  
+  // 3) Đặt lại mật khẩu (chỉ cần otp + newPassword)
+  export const resetPassword = async (otp: string, newPassword: string) => {
+    const res = await api.post('/auth/reset-password', { otp, newPassword });
+    return { status: res.status, data: res.data };
+  };
+  
+  // Kiểm tra email trước khi gửi
+  export const checkEmailForReset = async (email: string) => {
+    const res = await api.get(`/auth/check-email-for-reset?email=${encodeURIComponent(email)}`);
+    return res.data as { exists: boolean; message?: string };
+  };
 
 /**
  * ❌ Không cần hàm refreshToken riêng vì interceptor đã xử lý hoàn toàn.
