@@ -19,8 +19,32 @@ export const requireLength = {
 
 export const emailValidation = {
   pattern: {
-    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-    message: "không hợp lệ",
+    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    message: "Email không hợp lệ",
+  },
+};
+
+// Email validation chi tiết hơn
+export const strictEmailValidation = {
+  pattern: {
+    value: /^[a-zA-Z0-9]([a-zA-Z0-9._-]{0,62}[a-zA-Z0-9])?@[a-zA-Z0-9]([a-zA-Z0-9.-]{0,61}[a-zA-Z0-9])?\.([a-zA-Z]{2,6})$/,
+    message: "Định dạng email không hợp lệ",
+  },
+};
+
+// Regex pattern cho số điện thoại Việt Nam
+export const phoneValidation = {
+  pattern: {
+    value: /^(0|\+84)[1-9][0-9]{8,9}$/,
+    message: "Số điện thoại không hợp lệ",
+  },
+};
+
+// Regex pattern tổng hợp cho email hoặc số điện thoại
+export const emailOrPhoneValidation = {
+  pattern: {
+    value: /^(0|\+84)[1-9][0-9]{8,9}$|^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    message: "Email hoặc số điện thoại không hợp lệ",
   },
 };
 
