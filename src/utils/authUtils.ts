@@ -80,7 +80,7 @@ export const getRedirectPathByRole = (role: string): string => {
             return '/admin/dashboard';
         case 'ROLE_STUDENT':
         case 'ROLE_USER':
-            return '/student/dashboard';
+            return '/hoc';
         default:
             return '/';
     }

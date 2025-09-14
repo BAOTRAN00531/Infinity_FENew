@@ -64,7 +64,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         if (userRole === 'ROLE_ADMIN') {
             defaultRedirect = '/admin/dashboard';
         } else if (userRole === 'ROLE_STUDENT' || userRole === 'ROLE_USER') {
-            defaultRedirect = '/student/dashboard';
+            defaultRedirect = '/hoc';
         }
         
         const targetRedirect = redirectTo || defaultRedirect;

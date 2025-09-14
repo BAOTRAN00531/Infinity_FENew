@@ -82,7 +82,7 @@ function AuthGuard() {
                 } else if (role === 'ROLE_STUDENT' || role === 'ROLE_USER') {
                     // Student không được truy cập trang admin
                     if (currentPath.startsWith('/admin')) {
-                        navigate('/student/dashboard', { replace: true });
+                        navigate('/hoc', { replace: true });
                     }
                 }
 
