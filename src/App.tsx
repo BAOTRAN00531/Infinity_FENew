@@ -51,6 +51,7 @@ import {
     isTokenValid,
     getUserRole,
 } from "./utils/authUtils";
+import AdminDashboard from "./pages/Management/CRUD/AdminDashboard";
 
 /* ──────────────────────────────────────────────────────────────
    PublicOnlyRoute: Nếu ĐÃ đăng nhập thì chặn vào các trang public,
@@ -214,8 +215,8 @@ function App() {
 
                 {/* Admin area */}
                 <Route path="/admin" element={<ProtectedRoute allowedRoles={["ROLE_ADMIN"]} />}>
-                    <Route index element={<div>Admin Dashboard</div>} />
-                    <Route path="dashboard" element={<div>Admin Dashboard</div>} />
+                    <Route index element={<div><AdminDashboard/></div>} />
+                    <Route path="dashboard" element={<div><AdminDashboard/></div>} />
                 </Route>
 
                 {/* Trial (giữ nguyên là public theo logic cũ của bạn) */}

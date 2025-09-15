@@ -1,4 +1,5 @@
 import api from '@/api/api';
+import axios from 'axios';
 
 // Lexicon API - API service cho việc quản lý từ vựng
 // Cung cấp các function CRUD cho lexicon và dictionary
@@ -276,5 +277,43 @@ export const lexiconApi = {
     return response.data;
   }
 };
+// --- AI endpoints ---
+export async function aiSuggest(prefix: string, lang: string, level = 'beginner') {
+  const res = await fetch('/api/ai/lexicon/suggest', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prefix, lang, level }),
+  });
+  if (!res.ok) throw new Error('Suggest failed');
+  return res.json() as Promise<{ suggestions: Array<{ word: string; pos?: string; ipa?: string; glossVi?: string; popularity?: number; confidence?: number }> }>;
+}
 
+export async function aiEnrichWord(text: string, lang: string) {
+  const res = await fetch('/api/ai/lexicon/enrich-word', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text, lang }),
+  });
+  if (!res.ok) throw new Error('Enrich failed');
+  return res.json() as Promise<{ candidates: Array<{ pos?: string; ipa?: string; glossVi: string; examples?: string[]; collocations?: string[]; confidence?: number }> }>;
+}
+// ✅ KHÔNG để double /api/api
+export async function getAvailableVoices(languageCode?: string) {
+  const lc = (languageCode || '').trim();
+  const url = lc
+    ? `/api/tts/voices?languageCode=${encodeURIComponent(lc)}`
+    : `/api/tts/voices`;
+  const res = await axios.get(url);
+  return res.data as Array<{ name: string; gender: string }>;
+}
+
+export async function aiAnnotatePhrase(text: string, langSrc: string, langDst = 'vi') {
+  const res = await fetch('/api/ai/lexicon/annotate-phrase', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text, langSrc, langDst }),
+  });
+  if (!res.ok) throw new Error('Annotate failed');
+  return res.json() as Promise<{ tokens: string[]; map: Array<{ i: number; lexiconId?: number; senseId?: number; gloss?: string; ipa?: string; audioUrl?: string; alt?: string[] }> }>;
+}
 export default lexiconApi;

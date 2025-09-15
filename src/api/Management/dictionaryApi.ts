@@ -95,38 +95,9 @@ export const dictionaryApi = {
 
   // Get suggestions from backend API
   getSuggestions: async (languageCode: string, query: string): Promise<string[]> => {
-    try {
-      console.log(`🔍 Fetching suggestions for "${query}" in ${languageCode} from backend...`);
-      
-      const response = await api.get('/api/dictionary/suggest', {
-        params: {
-          lang: languageCode,
-          query: query
-        }
-      });
-      
-      console.log('✅ Backend suggestions received:', response.data);
-      return response.data;
-    } catch (error: any) {
-      console.error('❌ Error fetching suggestions from backend:', error);
-      
-      // Log detailed error information
-      if (error.response) {
-        console.error('Response error:', {
-          status: error.response.status,
-          data: error.response.data,
-          headers: error.response.headers
-        });
-      } else if (error.request) {
-        console.error('Request error:', error.request);
-      } else {
-        console.error('Error message:', error.message);
-      }
-      
-      // Fallback to local suggestions if API fails
-      console.log('🔄 Falling back to local suggestions...');
-      return dictionaryHelpers.generateLocalSuggestions(query, languageCode);
-    }
+    // NOTE: Tạm thời vô hiệu hóa gọi BE để tránh lỗi 500 và double /api
+    // Trả về gợi ý local cho đến khi backend sẵn sàng
+    return dictionaryHelpers.generateLocalSuggestions(query, languageCode);
   },
 
   // Get supported languages
@@ -274,16 +245,8 @@ export const dictionaryHelpers = {
     if (input.length < 2) {
       return [];
     }
-
-    try {
-      // Call backend API for suggestions
-      const suggestions = await dictionaryApi.getSuggestions(language, input);
-      return suggestions;
-    } catch (error) {
-      console.error('Failed to get suggestions from backend, using fallback:', error);
-      // Fallback to local suggestions if API fails
-      return dictionaryHelpers.generateLocalSuggestions(input, language);
-    }
+    // Tạm thời dùng local thay vì gọi BE
+    return dictionaryHelpers.generateLocalSuggestions(input, language);
   }
 };
 
