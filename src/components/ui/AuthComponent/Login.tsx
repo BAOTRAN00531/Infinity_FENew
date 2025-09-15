@@ -63,8 +63,6 @@ export default function Login() {
 
             console.log("Login successful:", { role, user: userWithRole });
 
-            toast.success("Đăng nhập thành công!");
-
             // Xác định trang đích dựa trên role
             let redirectPath = from || getRedirectPathByRole(role);
 

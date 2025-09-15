@@ -53,8 +53,6 @@ const OAuth2RedirectHandler: React.FC<OAuth2RedirectHandlerProps> = ({ className
 
                 console.log("OAuth2 login successful:", { role, user });
 
-                toast.success("Đăng nhập thành công!");
-
                 // Redirect dựa trên role
                 const redirectPath = getRedirectPathByRole(role);
                 navigate(redirectPath, { replace: true });
