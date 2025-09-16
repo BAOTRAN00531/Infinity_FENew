@@ -163,7 +163,7 @@ export default function Login() {
                         type="primary"
                         className="min-w-full mt-4 mb-3"
                         disabled={form.formState.isSubmitting}
-                        onclick={form.handleSubmit(onSubmit)}
+                        onClick={form.handleSubmit(onSubmit)}
                     >
                         {form.formState.isSubmitting ? "Đang đăng nhập..." : "Đăng nhập"}
                     </Button>

@@ -247,7 +247,7 @@ const Register = () => {
                         type="primary"
                         className="min-w-full mt-6 mb-4"
                         disabled={form.formState.isSubmitting}
-                        onclick={form.handleSubmit(onSubmit)}
+                        onClick={form.handleSubmit(onSubmit)}
                     >
                         {form.formState.isSubmitting ? "Đang tạo tài khoản..." : "Tạo tài khoản"}
                     </Button>

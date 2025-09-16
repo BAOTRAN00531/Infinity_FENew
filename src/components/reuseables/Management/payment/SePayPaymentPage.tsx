@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import api from '@/api/api';
+
 import { Copy } from 'lucide-react';
 import copy from 'copy-to-clipboard';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+import api from "@/api/api";
+import {OrderStatus} from "@/api/order";
 
 interface PaymentInfo {
     qrCodeUrl?: string;
@@ -14,7 +17,7 @@ interface PaymentInfo {
     accountNumber?: string;
     amount?: number;
     transferContent?: string;
-    status?: string; // <- trạng thái thanh toán
+    status?: string;
 }
 
 const SepayPaymentPage = () => {
@@ -35,6 +38,7 @@ const SepayPaymentPage = () => {
     const handleCancelPayment = async () => {
         if (!orderCode) return;
         try {
+            console.log("Hủy thanh toán đơn hàng:", orderCode);
             await api.post(`/api/sepay/cancel?orderCode=${orderCode}`);
             toast.info("Bạn đã hủy thanh toán đơn hàng này.");
             setIsChecking(false);
@@ -46,15 +50,25 @@ const SepayPaymentPage = () => {
     };
 
     useEffect(() => {
-        if (!orderCode) return;
+        if (!orderCode) {
+            console.error("Không có orderCode trong URL");
+            toast.error("Thiếu thông tin đơn hàng");
+            navigate("/plan-trial");
+            return;
+        }
+
+        console.log("Bắt đầu xử lý thanh toán cho order:", orderCode);
 
         // Lấy thông tin QR lần đầu
         const fetchPaymentInfo = async () => {
             try {
+                console.log("Gọi API lấy thông tin thanh toán Sepay");
                 const res = await api.get(`/api/sepay/pay?orderCode=${orderCode}`);
+                console.log("Thông tin thanh toán nhận được:", res.data);
                 setPaymentInfo(res.data);
             } catch (err) {
                 console.error('Lỗi lấy thông tin thanh toán:', err);
+                toast.error("Không thể lấy thông tin thanh toán");
             }
         };
 
@@ -63,24 +77,30 @@ const SepayPaymentPage = () => {
         // Polling trạng thái thanh toán
         const checkPaymentStatus = async () => {
             try {
+                console.log("Kiểm tra trạng thái thanh toán...");
                 const res = await api.get(`/api/sepay/status?orderCode=${orderCode}`);
                 console.log("Payment status from backend:", res.data.status);
 
                 const status = res.data?.status;
 
-                if (status === 'PAID') {
+                if (status === OrderStatus.PAID) {
+                    console.log("Thanh toán thành công!");
                     toast.success('Thanh toán thành công! Đang chuyển hướng...');
                     setIsChecking(false);
                     setTimeout(() => {
                         navigate(`/invoice?orderId=${orderCode}&result=success`);
-                    }, 7000);
-                } else if (status === 'FAILED') {
+                    }, 3000);
+                } else if (status === OrderStatus.FAILED) {
+                    console.log("Thanh toán thất bại");
                     toast.error('Thanh toán thất bại.');
                     setIsChecking(false);
-                } else if (status === 'CANCELLED') {
+                } else if (status === OrderStatus.CANCELLED) {
+                    console.log("Đơn hàng đã bị hủy");
                     toast.info('Đơn hàng đã bị hủy.');
                     setIsChecking(false);
                     navigate(`/invoice?orderId=${orderCode}&result=cancel`);
+                } else {
+                    console.log("Đơn hàng đang chờ xử lý...");
                 }
             } catch (err) {
                 console.error('Lỗi kiểm tra trạng thái thanh toán:', err);
@@ -95,6 +115,7 @@ const SepayPaymentPage = () => {
                     clearInterval(countdownInterval);
                     setIsChecking(false);
 
+                    console.log("Hết thời gian thanh toán, tự động hủy");
                     // 🔥 Hết thời gian thì tự động hủy đơn
                     handleCancelPayment();
                     return 0;
@@ -104,6 +125,7 @@ const SepayPaymentPage = () => {
         }, 1000);
 
         return () => {
+            console.log("Dọn dẹp intervals");
             clearInterval(pollInterval);
             clearInterval(countdownInterval);
         };
@@ -133,7 +155,7 @@ const SepayPaymentPage = () => {
                             className="w-72 h-72 border rounded-md"
                         />
                     ) : (
-                        <div className="text-red-500">Không có mã QR</div>
+                        <div className="text-red-500">Đang tải mã QR...</div>
                     )}
                 </div>
 
@@ -146,7 +168,7 @@ const SepayPaymentPage = () => {
                         )}
                         <div>
                             <div className="text-base font-semibold">
-                                {paymentInfo.bankName || 'Không rõ ngân hàng'}
+                                {paymentInfo.bankName || 'Đang tải...'}
                             </div>
                             <div className="text-gray-500">Ngân hàng</div>
                         </div>
@@ -155,7 +177,7 @@ const SepayPaymentPage = () => {
                     {/* Chủ tài khoản */}
                     <div>
                         <div className="text-gray-500 mb-1">Chủ tài khoản</div>
-                        <div className="font-medium">{paymentInfo.accountName || '...'}</div>
+                        <div className="font-medium">{paymentInfo.accountName || 'Đang tải...'}</div>
                     </div>
 
                     {/* Số tài khoản */}
@@ -167,7 +189,7 @@ const SepayPaymentPage = () => {
                                 className="w-4 h-4 text-gray-500 cursor-pointer"
                             />
                         </div>
-                        <div className="font-medium">{paymentInfo.accountNumber || '...'}</div>
+                        <div className="font-medium">{paymentInfo.accountNumber || 'Đang tải...'}</div>
                     </div>
 
                     {/* Số tiền */}
@@ -189,7 +211,7 @@ const SepayPaymentPage = () => {
                                 className="w-4 h-4 text-gray-500 cursor-pointer"
                             />
                         </div>
-                        <div className="font-medium">{paymentInfo.transferContent || '...'}</div>
+                        <div className="font-medium">{paymentInfo.transferContent || 'Đang tải...'}</div>
                     </div>
 
                     <hr className="my-3" />

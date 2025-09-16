@@ -1,37 +1,25 @@
-// pages/InvoicePage.tsx
+// src/pages/InvoicePage.tsx
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { toast } from 'react-toastify';
-import PageLayout from '@/pages/Management/PageLayout';
-import api from '@/api/api';
-import { ShoppingCart } from "lucide-react"; // ✅ thay vì axios
+import { toast } from 'sonner';
+import { ShoppingCart } from "lucide-react";
+import { getOrderDetails, cancelOrder } from "@/api/orderApi";
+import { OrderResponse, OrderDetailDTO, OrderStatus } from "@/api/order";
+import axios from 'axios';
+import PageLayout from "@pages/Management/PageLayout";
 
-interface OrderDetailDTO {
-    serviceName: string;
-    serviceDesc: string;
-    price: number;
-}
-interface Invoice {
-    courseName: string;
-    orderCode: string;
-    status: string;
-    totalAmount: number;
-    paymentMethod: string;
-    orderDate: string;
-    details: OrderDetailDTO[];
-}
-
+// Định nghĩa kiểu dữ liệu cho Badge trạng thái
 const statusBadge: Record<string, string> = {
     PENDING: 'bg-yellow-100 text-yellow-800',
-    PROCESSING: 'bg-blue-100 text-blue-800',
-    COMPLETED: 'bg-green-100 text-green-800',
-    CANCELED: 'bg-red-100 text-red-800',
+    PAID: 'bg-green-100 text-green-800',
+    CANCELLED: 'bg-red-100 text-red-800',
+    FAILED: 'bg-red-100 text-red-800',
 };
 
 const InvoicePage: React.FC = () => {
     const [searchParams] = useSearchParams();
-    const [invoice, setInvoice] = useState<Invoice | null>(null);
+    const [invoice, setInvoice] = useState<OrderResponse | null>(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
@@ -40,13 +28,21 @@ const InvoicePage: React.FC = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (!orderCode) return;
+            if (!orderCode) {
+                setLoading(false);
+                return;
+            }
 
             try {
-                const { data } = await api.get<Invoice>(`/api/orders/code/${orderCode}`);
+                // ✅ Sử dụng hàm API đã định nghĩa
+                const data = await getOrderDetails(orderCode);
                 setInvoice(data);
             } catch (err) {
-                toast.error('Không thể tải hoá đơn', { autoClose: 1200 });
+                if (axios.isAxiosError(err)) {
+                    toast.error(err.response?.data?.message || 'Không thể tải hoá đơn', { duration: 1200 });
+                } else {
+                    toast.error('Không thể tải hoá đơn', { duration: 1200 });
+                }
             } finally {
                 setLoading(false);
             }
@@ -59,16 +55,26 @@ const InvoicePage: React.FC = () => {
         if (!window.confirm('Bạn chắc chắn muốn huỷ đơn hàng này?')) return;
 
         try {
-            await api.post(`/api/orders/cancel?orderCode=${invoice.orderCode}`, {});
-            toast.success('Huỷ đơn thành công!', { autoClose: 1200 });
-            setTimeout(() => navigate('/order-history'), 1500);
+            // ✅ Sử dụng hàm API đã định nghĩa
+            await cancelOrder(invoice.orderCode);
+            toast.success('Huỷ đơn thành công!', { duration: 1200 });
+            setTimeout(() => navigate('/client/order-history'), 1500);
         } catch (err) {
-            toast.error('Không thể huỷ đơn. Vui lòng thử lại.', { autoClose: 1200 });
+            if (axios.isAxiosError(err)) {
+                toast.error(err.response?.data?.message || 'Không thể huỷ đơn. Vui lòng thử lại.', { duration: 1200 });
+            } else {
+                toast.error('Không thể huỷ đơn. Vui lòng thử lại.', { duration: 1200 });
+            }
         }
     };
 
-    if (loading) return <div className="p-10 text-gray-600">Đang tải...</div>;
-    if (!invoice) return <div className="p-10 text-red-500">Không tìm thấy hoá đơn.</div>;
+    if (loading) {
+        return <div className="p-10 text-gray-600 dark:text-gray-400 text-center">Đang tải...</div>;
+    }
+
+    if (!invoice) {
+        return <div className="p-10 text-red-500 dark:text-red-400 text-center">Không tìm thấy hoá đơn.</div>;
+    }
 
     return (
         <PageLayout>
@@ -79,11 +85,11 @@ const InvoicePage: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4 }}
                     className={`text-2xl font-bold mb-6 ${
-                        result === 'success' ? 'text-green-600' : 'text-red-600'
+                        result === 'success' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                     }`}
                 >
                     {result === 'success' && '🎉 Thanh toán thành công!'}
-                    {result === 'fail' && '❌ Đơn hàng đã huỷ'}
+                    {result === 'fail' && '❌ Thanh toán thất bại!'}
                     {result === 'pending' && '⏳ Đơn hàng đang chờ xử lý'}
                 </motion.h2>
 
@@ -96,7 +102,7 @@ const InvoicePage: React.FC = () => {
 
                     <div className="flex flex-wrap gap-2">
                         <span className="font-semibold">Khóa học:</span>
-                        <span className="font-mono">{invoice.courseName}</span>
+                        <span className="font-mono">{invoice.courseName || "Gói VIP"}</span>
                     </div>
 
                     <div className="flex flex-wrap gap-2">
@@ -124,8 +130,8 @@ const InvoicePage: React.FC = () => {
 
                     <div className="flex flex-wrap gap-2">
                         <span className="font-semibold">Tổng tiền:</span>
-                        <span className="text-green-600 font-bold">
-                            {invoice.totalAmount.toLocaleString()}₫
+                        <span className="text-green-600 dark:text-green-400 font-bold">
+                            {invoice.totalAmount?.toLocaleString()}₫
                         </span>
                     </div>
 
@@ -133,7 +139,6 @@ const InvoicePage: React.FC = () => {
                     {invoice.details?.length > 0 && (
                         <div className="mt-4">
                             <h4 className="font-semibold mb-3 text-lg">📋 Chi tiết đơn hàng</h4>
-
                             <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
                                 <table className="w-full text-sm">
                                     <thead className="bg-gray-100 dark:bg-gray-700">
@@ -147,14 +152,14 @@ const InvoicePage: React.FC = () => {
                                     {invoice.details.map((d, idx) => (
                                         <tr
                                             key={idx}
-                                            className="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+                                            className="border-t border-gray-200 dark:border-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                                         >
                                             <td className="px-4 py-2 font-medium">{d.serviceName}</td>
                                             <td className="px-4 py-2 text-gray-600 dark:text-gray-300">
                                                 {d.serviceDesc}
                                             </td>
-                                            <td className="px-4 py-2 text-right text-green-600 font-semibold">
-                                                {d.price.toLocaleString()}₫
+                                            <td className="px-4 py-2 text-right text-green-600 dark:text-green-400 font-semibold">
+                                                {d.price?.toLocaleString()}₫
                                             </td>
                                         </tr>
                                     ))}
@@ -165,7 +170,7 @@ const InvoicePage: React.FC = () => {
                     )}
 
                     {/* Nút huỷ đơn */}
-                    {invoice.status === 'PENDING' && (
+                    {invoice.status === OrderStatus.PENDING && (
                         <button
                             onClick={handleCancel}
                             className="mt-4 w-full sm:w-auto px-5 py-2 rounded bg-red-600 text-white hover:bg-red-700 transition"

@@ -70,7 +70,7 @@ function Notification({ type }) {
             </span>
           </div>
           <Button
-            onclick={nextQuestion}
+            onClick={nextQuestion}
             className={cn([
               type === "correct" && "bg-primary shadow-primary",
               type === "incorrect" && "bg-red-500 shadow-red-500",
