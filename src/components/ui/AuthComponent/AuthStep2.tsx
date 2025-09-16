@@ -105,7 +105,7 @@ const AuthStep2 = () => {
                             )}
                         />
                         <Button
-                            onclick={form.handleSubmit(onSubmit)}
+                            onClick={form.handleSubmit(onSubmit)}
                             type="secondary"
                             className="m-auto"
                         >

@@ -16,7 +16,7 @@ const FooterForm = () => {
                 <Button
                     className="font-[900] text-[16px] uppercase text-slate-600"
                     type="cta"
-                    onclick={startFacebookOAuth}
+                    onClick={startFacebookOAuth}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -52,7 +52,7 @@ const FooterForm = () => {
                 <Button
                     className="font-[900] text-[16px] uppercase text-slate-600"
                     type="cta"
-                    onclick={startGoogleOAuth}
+                    onClick={startGoogleOAuth}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

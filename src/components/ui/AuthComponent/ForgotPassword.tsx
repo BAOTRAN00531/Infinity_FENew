@@ -284,7 +284,7 @@ const ForgotPassword = () => {
               checkingEmail ||
               emailExists === null
             }
-            onclick={emailForm.handleSubmit(onSendEmail)}
+            onClick={emailForm.handleSubmit(onSendEmail)}
           >
             {emailForm.formState.isSubmitting
               ? "Đang gửi..."
@@ -359,7 +359,7 @@ const ForgotPassword = () => {
               checkingOtp ||
               otpValid === null
             }
-            onclick={otpForm.handleSubmit(onVerifyOTP)}
+            onClick={otpForm.handleSubmit(onVerifyOTP)}
           >
             {otpForm.formState.isSubmitting
               ? "Đang xác thực..."
@@ -372,7 +372,7 @@ const ForgotPassword = () => {
               : "Xác thực OTP"}
           </Button>
 
-          <Button type="secondary" className="min-w-full" onclick={() => setStep("email")}>
+          <Button type="secondary" className="min-w-full" onClick={() => setStep("email")}>
             Quay lại
           </Button>
         </form>
@@ -436,12 +436,12 @@ const ForgotPassword = () => {
             type="primary"
             className="min-w-full"
             disabled={resetForm.formState.isSubmitting}
-            onclick={resetForm.handleSubmit(onResetPassword)}
+            onClick={resetForm.handleSubmit(onResetPassword)}
           >
             {resetForm.formState.isSubmitting ? "Đang đặt lại..." : "Đặt lại mật khẩu"}
           </Button>
 
-          <Button type="secondary" className="min-w-full" onclick={() => setStep("otp")}>
+          <Button type="secondary" className="min-w-full" onClick={() => setStep("otp")}>
             Quay lại
           </Button>
         </form>

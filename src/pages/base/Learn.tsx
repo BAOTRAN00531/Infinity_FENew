@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
   BookIcon,
   HeadphonesIcon,
@@ -11,6 +10,8 @@ import LessonProgressCircle from "../../components/reuseables/LessonCircleProgre
 import NextLessonBox from "../../components/page-component/base/NextLessonBox";
 import TrialBox from "../../components/page-component/base/TrialBox";
 import { NavLink } from "react-router-dom";
+import SidebarAd from "@components/ui/Ads/SidebarAd";
+import {Suspense} from "react";
 
 const lessons = [
   {
@@ -148,6 +149,11 @@ const lessons = [
 function Learn() {
   return (
     <div className="flex">
+      {/*quang cao*/}
+      <Suspense fallback={<div>Loading ad...</div>}>
+        <SidebarAd />
+      </Suspense>
+
       <LessonGrid lessons={lessons} className="grow" />
       <aside className="max-w-[360px] h-full flex flex-col gap-8">
         <div

@@ -5,7 +5,6 @@ import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, loadEnv, ProxyOptions } from "vite";
 
 export default defineConfig(({ mode }) => {
-    // Đọc biến môi trường VITE_* từ .env.* theo mode
     const env = loadEnv(mode, process.cwd(), "");
     const backendUrl = env.VITE_BACKEND_URL || "http://localhost:8080";
 
@@ -13,7 +12,12 @@ export default defineConfig(({ mode }) => {
         plugins: [react(), tailwindcss()],
         resolve: {
             alias: {
-                "@": path.resolve(__dirname, "./src"),
+                "@": path.resolve(__dirname, "src"), // alias @ → ./src
+                "@components": path.resolve(__dirname, "src/components"),
+                "@pages": path.resolve(__dirname, "src/pages"),
+                "@utils": path.resolve(__dirname, "src/utils"),
+                "@types": path.resolve(__dirname, "src/types"),
+                "@assets": path.resolve(__dirname, "src/assets"),
             },
         },
         server: {
@@ -33,6 +37,10 @@ export default defineConfig(({ mode }) => {
                     },
                 } as ProxyOptions,
             },
+        },
+        // Thêm cấu hình để cải thiện trải nghiệm development
+        optimizeDeps: {
+            include: ['react', 'react-dom', 'react-router-dom'],
         },
     };
 });

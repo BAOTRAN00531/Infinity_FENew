@@ -1,7 +1,7 @@
 // App.tsx
-// @ts-nocheck
+
 import { Route, Routes, useNavigate, useLocation, Navigate, Outlet } from "react-router-dom";
-import { useEffect } from "react";
+import {useEffect, useState} from "react";
 import { toast, Toaster } from "sonner";
 import { jwtDecode } from "jwt-decode";
 
@@ -27,6 +27,7 @@ import AuthStep2 from "./components/ui/AuthComponent/AuthStep2";
 import NotFoundOverlay from "./components/ui/NotFoundOverlay";
 import OAuthSuccess from "./pages/OAuthSuccess";
 
+
 // Trial
 import TrialComponent from "./components/ui/TrialComponent/TrialComponent";
 import MainIndexTrialComponent from "./components/ui/TrialComponent/MainIndexTrialComponent";
@@ -35,9 +36,9 @@ import PlanTrialComponent from "./components/ui/TrialComponent/PlanTrialComponen
 import PaymentComponent from "./components/ui/TrialComponent/PaymentComponent";
 
 // ✅ verify
-import VerifyEmail from "./pages/auth/VerifyEmail";
-import VerifySuccess from "./pages/auth/VerifySuccess";
-import VerifyConfirmation from "./pages/auth/VerifyConfirmation";
+import VerifyEmail from "@pages/Auth/VerifyEmail";
+import VerifySuccess from "@pages/Auth/VerifySuccess";
+import VerifyConfirmation from "@pages/Auth/VerifyConfirmation";
 
 // ✅ Loading
 import LoadingIndicator from "./components/LoadingIndicator";
@@ -52,6 +53,14 @@ import {
     getUserRole,
 } from "./utils/authUtils";
 import AdminDashboard from "./pages/Management/CRUD/AdminDashboard";
+import SepayPaymentPage from "@components/reuseables/Management/payment/SePayPaymentPage";
+import InvoicePage from "@components/reuseables/Management/payment/InvoicePage";
+import OrderHistoryPage from "@components/reuseables/Management/history/OrderHistoryPage";
+import AdPopupWrapper from "@components/ui/Ads/Manager/AdPopupWrapper";
+import {UserProfile} from "@/api/user";
+import {fetchUserProfile} from "@/api/userService";
+import CenterPopupAd from "@components/ui/Ads/CenterPopupAd";
+
 
 /* ──────────────────────────────────────────────────────────────
    PublicOnlyRoute: Nếu ĐÃ đăng nhập thì chặn vào các trang public,
@@ -139,13 +148,33 @@ function AuthGuard() {
 }
 
 function App() {
+    const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+
+
+
+    // Fetch thông tin người dùng ở cấp cao nhất
+    useEffect(() => {
+        const loadProfile = async () => {
+            try {
+                const data = await fetchUserProfile();
+                setUserProfile(data);
+            } catch (error) {
+                console.error("Lỗi khi tải thông tin người dùng:", error);
+                setUserProfile(null);
+            }
+        };
+        loadProfile();
+    }, []);
+
     return (
         <>
             <LoadingIndicator />
             <AuthGuard />
             <Toaster position="top-right" richColors />
+            <AdPopupWrapper userProfile={userProfile}>
+                <CenterPopupAd />
 
-            <Routes>
+                <Routes>
                 {/* ───── PUBLIC ONLY ───── */}
                 <Route element={<PublicOnlyRoute />}>
                     <Route path="/" element={<Hello />} />
@@ -225,11 +254,19 @@ function App() {
                     <Route path="/trial" element={<MainIndexTrialComponent />} />
                     <Route path="/plan-trial" element={<PlanTrialComponent />} />
                     <Route path="/payment" element={<PaymentComponent />} />
+                    <Route path="/invoice" element={<InvoicePage />} />
+                    <Route path="/order-history" element={<OrderHistoryPage />} />
+
+
                 </Route>
+                <Route path="/sepay-payment" element={<SepayPaymentPage />} />
 
                 {/* 404 */}
                 <Route path="*" element={<NotFoundOverlay />} />
-            </Routes>
+
+                </Routes>
+            </AdPopupWrapper>
+
         </>
     );
 }

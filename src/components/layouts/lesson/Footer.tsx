@@ -76,7 +76,7 @@ function Footer({ showVocab = false, showToggleVocab = false, onCheckAnswer }) {
                       ? "primary"
                       : "secondary"
                   }
-                  onclick={() => handleWordClick(vocab)}
+                  onClick={() => handleWordClick(vocab)}
                 >
                   {vocab.text}
                 </Button>
@@ -85,14 +85,14 @@ function Footer({ showVocab = false, showToggleVocab = false, onCheckAnswer }) {
           </div>
         )}
         <div className="flex justify-between w-full">
-          <Button className="mt-4" type="secondary" onclick={handleSkip}>
+          <Button className="mt-4" type="secondary" onClick={handleSkip}>
             Bỏ qua
           </Button>
           {showToggleVocab ? (
             <Button
               className="mt-4 capitalize"
               type="ghosted"
-              onclick={toggleUseVocab}
+              onClick={toggleUseVocab}
             >
               {useVocab ? (
                 <>
@@ -110,7 +110,7 @@ function Footer({ showVocab = false, showToggleVocab = false, onCheckAnswer }) {
             className="mt-4"
             type="primary"
             disabled={!hasAnswered}
-            onclick={() => {
+            onClick={() => {
               checkAnswer();
               console.log("Checking answer...");
             }}

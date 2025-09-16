@@ -21,7 +21,7 @@ const Header: React.FC = () => {
             <div className="max-w-7xl mx-auto px-5 py-3 flex items-center justify-between">
                 <Logo />
                 {showCTA && (
-                    <Button type="cta" onclick={() => navigate(ctaTo)}>
+                    <Button type="cta" onClick={() => navigate(ctaTo)}>
                         {ctaLabel}
                     </Button>
                 )}

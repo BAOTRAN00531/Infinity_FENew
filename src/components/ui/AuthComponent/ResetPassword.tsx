@@ -92,7 +92,7 @@ const ResetPassword = () => {
             )}
           />
           <Button
-            onclick={form.handleSubmit(onSubmit)}
+            onClick={form.handleSubmit(onSubmit)}
             type="primary"
             className="min-w-full"
           >

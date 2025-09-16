@@ -65,7 +65,7 @@ function Matching() {
           {currentQuestion.leftColumn.map((item) => (
             <Button
               key={item.id}
-              onclick={() => handleLeftClick(item)}
+              onClick={() => handleLeftClick(item)}
               className={`normal-case max-w-none w-full
                 ${
                   selectedLeft?.id === item.id
@@ -97,7 +97,7 @@ function Matching() {
           {shuffledRight.map((item) => (
             <Button
               key={item.id}
-              onclick={() => handleRightClick(item)}
+              onClick={() => handleRightClick(item)}
               className={`normal-case max-w-none w-full
                 ${
                   selectedRight?.id === item.id
@@ -127,7 +127,7 @@ function Matching() {
       {isCompleted && (
         <Notification
           type={"success"}
-          onclick={() => redirect(`/hoc/bai-hoc/${lesson.slug}/ket-qua`)}
+          onClick={() => redirect(`/hoc/bai-hoc/${lesson.slug}/ket-qua`)}
         />
       )}
     </div>
