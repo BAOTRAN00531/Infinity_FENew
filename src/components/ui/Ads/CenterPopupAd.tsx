@@ -50,7 +50,7 @@ const CenterPopupAd: React.FC = memo(() => {
                     <h2 className="text-2xl font-bold mb-4">QUẢNG CÁO ĐẶC BIỆT</h2>
                     {/*300x200*/}
                     <img
-                        src="https://imback.pi7.org/downloadimage/resized/CusRM_69211depositphotos_354473724-stock-photo-illustration-numbers-888-gold-isolated.png"
+                        src="https://i.ibb.co/pSpKVQd/Adult-capybara.webp"
                         alt="Pop-up Advertisement"
                         className="w-full h-auto rounded-lg mb-4"
                         loading="lazy" // Tối ưu tải ảnh

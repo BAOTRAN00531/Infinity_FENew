@@ -275,28 +275,28 @@ const PaymentComponent = () => {
                   <img src={cashIcon} alt="Tiền mặt" className="h-6 mb-1" />
                   <span className="text-xs font-medium text-gray-700">Tiền mặt</span>
                 </button>
-                <button
-                    onClick={() => setSelectedPaymentMethod("VISA_MASTER")}
-                    className={`flex flex-col items-center justify-center p-3 border rounded-lg transition ${
-                        selectedPaymentMethod === "VISA_MASTER"
-                            ? "border-blue-600 bg-blue-50"
-                            : "border-gray-300 bg-white"
-                    }`}
-                >
-                  <img src={visaIcon} alt="Visa" className="h-6 mb-1" />
-                  <span className="text-xs font-medium text-gray-700">Thẻ</span>
-                </button>
-                <button
-                    onClick={() => setSelectedPaymentMethod("MOMO")}
-                    className={`flex flex-col items-center justify-center p-3 border rounded-lg transition ${
-                        selectedPaymentMethod === "MOMO"
-                            ? "border-blue-600 bg-blue-50"
-                            : "border-gray-300 bg-white"
-                    }`}
-                >
-                  <img src={momoIcon} alt="MoMo" className="h-6 mb-1" />
-                  <span className="text-xs font-medium text-gray-700">MoMo</span>
-                </button>
+                {/*<button*/}
+                {/*    onClick={() => setSelectedPaymentMethod("VISA_MASTER")}*/}
+                {/*    className={`flex flex-col items-center justify-center p-3 border rounded-lg transition ${*/}
+                {/*        selectedPaymentMethod === "VISA_MASTER"*/}
+                {/*            ? "border-blue-600 bg-blue-50"*/}
+                {/*            : "border-gray-300 bg-white"*/}
+                {/*    }`}*/}
+                {/*>*/}
+                {/*  <img src={visaIcon} alt="Visa" className="h-6 mb-1" />*/}
+                {/*  <span className="text-xs font-medium text-gray-700">Thẻ</span>*/}
+                {/*</button>*/}
+                {/*<button*/}
+                {/*    onClick={() => setSelectedPaymentMethod("MOMO")}*/}
+                {/*    className={`flex flex-col items-center justify-center p-3 border rounded-lg transition ${*/}
+                {/*        selectedPaymentMethod === "MOMO"*/}
+                {/*            ? "border-blue-600 bg-blue-50"*/}
+                {/*            : "border-gray-300 bg-white"*/}
+                {/*    }`}*/}
+                {/*>*/}
+                {/*  <img src={momoIcon} alt="MoMo" className="h-6 mb-1" />*/}
+                {/*  <span className="text-xs font-medium text-gray-700">MoMo</span>*/}
+                {/*</button>*/}
                 <button
                     onClick={() => setSelectedPaymentMethod("SEPAY")}
                     className={`flex flex-col items-center justify-center p-3 border rounded-lg transition ${

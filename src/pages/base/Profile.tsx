@@ -1,6 +1,7 @@
 // src/pages/Profile.tsx
-import React, { useEffect, useState } from 'react';
-import { PencilIcon } from "lucide-react";
+
+import React, { useEffect, useState, useRef } from 'react';
+import { PencilIcon, CrownIcon } from "lucide-react";
 import TrialBox from "../../components/page-component/base/TrialBox";
 import { NavLink, useNavigate } from "react-router-dom";
 import Input from "../../components/reuseables/Input";
@@ -9,11 +10,13 @@ import { toast } from "sonner";
 import { clearAuthData } from "@/utils/authUtils";
 import { logout } from "@/api/authService";
 import OrderHistoryButton from "@components/reuseables/Management/history/OrderHistoryButton";
-import { fetchUserProfile, updateUserProfile, updatePassword } from "@/api/userService"; // ✅ Sửa đường dẫn nếu cần
+
+// ✅ Import các hàm API cần thiết
 
 import type { UserProfile, UserProfileUpdate, PasswordUpdate } from "@/api/user";
 
 import UserAvatar from "@components/ui/UserAvatar";
+import {fetchUserProfile, updatePassword, updateUserProfile, uploadAvatar} from "@/api/userService";
 
 function Profile() {
     const navigate = useNavigate();
@@ -21,19 +24,19 @@ function Profile() {
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
 
-    // ✅ State cho form thông tin cá nhân
-    const [formState, setFormState] = useState({
+    const [formState, setFormState] = useState<UserProfileUpdate>({
         fullName: '',
         email: '',
     });
 
-    // ✅ State cho form đổi mật khẩu
-    const [passwordState, setPasswordState] = useState({
+    const [passwordState, setPasswordState] = useState<PasswordUpdate>({
         currentPassword: '',
         newPassword: '',
     });
 
-    // ✅ Fetch dữ liệu khi component mount
+    const [selectedAvatar, setSelectedAvatar] = useState<File | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
     useEffect(() => {
         const loadUserProfile = async () => {
             try {
@@ -65,15 +68,45 @@ function Profile() {
         }
     };
 
+    const handleAvatarClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setSelectedAvatar(e.target.files[0]);
+            toast.info("Avatar đã được chọn. Nhấn 'Cập nhật' để lưu.");
+        }
+    };
+
     const handleProfileUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
+
         try {
-            await updateUserProfile(formState);
+            let newAvatarUrl = userProfile?.avatar;
+
+            // ✅ Bước 1: Tải file avatar lên server nếu có
+            if (selectedAvatar) {
+                const uploadResponse = await uploadAvatar(selectedAvatar);
+                newAvatarUrl = uploadResponse.url;
+            }
+
+            // ✅ Bước 2: Cập nhật thông tin profile bao gồm URL avatar mới
+            const profileDataToUpdate: UserProfileUpdate = {
+                ...formState,
+                avatar: newAvatarUrl,
+            };
+
+            await updateUserProfile(profileDataToUpdate);
+
             toast.success("Cập nhật thông tin thành công.");
-            // Cập nhật lại state userProfile sau khi thành công
-            setUserProfile(prev => prev ? { ...prev, ...formState } : null);
+
+            // Cập nhật state sau khi thành công để UI hiển thị ngay
+            setUserProfile(prev => prev ? { ...prev, ...profileDataToUpdate } : null);
+            setSelectedAvatar(null);
+
         } catch (error) {
-            toast.error("Không thể cập nhật thông tin.");
+            toast.error(error.message);
         }
     };
 
@@ -86,10 +119,9 @@ function Profile() {
         try {
             await updatePassword(passwordState);
             toast.success("Đổi mật khẩu thành công.");
-            // Reset form mật khẩu
             setPasswordState({ currentPassword: '', newPassword: '' });
         } catch (error) {
-            toast.error("Mật khẩu hiện tại không khớp. Vui lòng nhập lại.");
+            toast.error(error.message);
         }
     };
 
@@ -101,30 +133,44 @@ function Profile() {
         return <div className="text-center p-10 text-red-500">Không thể tải thông tin. Vui lòng thử lại.</div>;
     }
 
-    // ✅ Lớp CSS có điều kiện cho bảng hồ sơ
     const profileBgClass = userProfile.isVip ? 'bg-yellow-500' : 'bg-primary';
 
     return (
-        <div className="flex be-vietnam-pro-regular gap-8">
-            <div className="grow flex justify-center">
-                <div className="max-w-[800px] w-full">
+        <div className="flex flex-col md:flex-row be-vietnam-pro-regular gap-8">
+            <div className="grow flex justify-center order-2 md:order-1">
+                <div className="max-w-[800px] md:max-w-full w-full">
                     <div className={`w-full ${profileBgClass} rounded-2xl flex flex-col justify-between p-5`}>
                         <div className="flex justify-end gap-3">
-                            <NavLink>
+                            <NavLink to="#">
                                 <PencilIcon className="w-6 h-6 text-white" strokeWidth={3} />
                             </NavLink>
                             <OrderHistoryButton />
                         </div>
-                        <div role="profile" className="flex translate-y-[50%] gap-3 w-full">
-                            <UserAvatar
-                                avatarUrl={userProfile.avatar}
-                                isVip={userProfile.isVip}
-                                alt={userProfile.username}
-                                size="lg"
-                            />
-                            <div className="flex flex-col gap-3 text-white w-full">
-                                <h1 className="uppercase font-black">{userProfile.fullName || userProfile.username}</h1>
-                                <div className="w-full flex items-center justify-between">
+                        <div role="profile" className="flex translate-y-[50%] gap-3 w-full flex-col md:flex-row items-center md:items-start">
+                            <div className="relative cursor-pointer" onClick={handleAvatarClick}>
+                                <UserAvatar
+                                    avatarUrl={selectedAvatar ? URL.createObjectURL(selectedAvatar) : userProfile.avatar}
+                                    isVip={userProfile.isVip}
+                                    alt={userProfile.username}
+                                    size="lg"
+                                />
+                                {userProfile.isVip && (
+                                    <CrownIcon
+                                        className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4 text-yellow-400 w-8 h-8 md:w-10 md:h-10"
+                                        fill="currentColor"
+                                    />
+                                )}
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    onChange={handleAvatarChange}
+                                    className="hidden"
+                                    accept="image/*"
+                                />
+                            </div>
+                            <div className="flex flex-col gap-3 text-white w-full items-center md:items-start">
+                                <h1 className="uppercase font-black text-center md:text-left">{userProfile.fullName || userProfile.username}</h1>
+                                <div className="w-full flex flex-col items-center md:items-start md:flex-row md:justify-between">
                                     <p>{userProfile.username}</p>
                                     <p>
                                         Tham gia từ tháng 8/2023
@@ -134,7 +180,7 @@ function Profile() {
                         </div>
                     </div>
 
-                    <form onSubmit={handleProfileUpdate} className="mt-20 flex flex-col gap-5">
+                    <form onSubmit={handleProfileUpdate} className="mt-20 md:mt-10 flex flex-col gap-5">
                         <div role="form-title" className="uppercase font-black flex items-center gap-2">
                             <div className="w-1 h-4 bg-primary rounded-full"></div>
                             <h2 className="text-slate-600">Thông tin chung</h2>
@@ -153,7 +199,7 @@ function Profile() {
                             <Button
                                 className="capitalize font-bold"
                                 type="secondary"
-                                htmlType="submit" // ✅ Đặt thuộc tính này để nút gửi form
+                                htmlType="submit"
                             >
                                 Cập nhật
                             </Button>
@@ -181,7 +227,7 @@ function Profile() {
                             <Button
                                 className="capitalize font-bold h-fit"
                                 type="secondary"
-                                htmlType="submit" // ✅ Đặt thuộc tính này để nút gửi form
+                                htmlType="submit"
                             >
                                 Đổi mật khẩu
                             </Button>
@@ -194,20 +240,18 @@ function Profile() {
                             <h2 className="text-slate-600">Cẩn trọng</h2>
                         </div>
                         <div className="flex justify-end items-center w-full gap-3">
-
                             <Button
                                 className="capitalize font-bold h-fit"
                                 type="danger"
-                                onClick={() => console.log("Reset lịch sử học")} // ✅ Thêm hàm xử lý sự kiện onClick
+                                onClick={() => console.log("Reset lịch sử học")}
                             >
                                 Reset lịch sử học
                             </Button>
-
                             <Button
                                 className="capitalize font-bold h-fit"
                                 type="danger"
                                 disabled={loggingOut}
-                                onClick={handleLogout} // ✅ Sửa từ onclick thành onClick
+                                onClick={handleLogout}
                             >
                                 {loggingOut ? "Đang đăng xuất..." : "Đăng xuất"}
                             </Button>
@@ -216,7 +260,7 @@ function Profile() {
                 </div>
             </div>
 
-            <aside className="max-w-[360px] h-full flex flex-col gap-8">
+            <aside className="max-w-[360px] md:max-w-full h-full flex flex-col gap-8 order-1 md:order-2 md:mt-20">
                 <TrialBox />
             </aside>
         </div>

@@ -31,7 +31,7 @@ const FixedFooterAd: React.FC<FixedFooterAdProps> = memo(({ onClose }) => {
                     }}
                 >
                     <img
-                        src="https://imback.pi7.org/downloadimage/resized/CusRM_84765Screenshot2025-09-16152332.png"
+                        src="https://i.ibb.co/R4dktzm5/Screenshot2025-09-16152332.png"
                         alt="Fixed Footer Ad"
                         className="w-full h-auto"
                         loading="lazy"
