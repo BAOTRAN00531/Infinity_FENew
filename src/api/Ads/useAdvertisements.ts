@@ -14,6 +14,9 @@ export const useAdvertisements = (userProfile: UserProfile | null, pathname: str
         '/invoice',
         '/order-history',
         '/sepay-payment',
+        '/trial',
+        '/remider',
+        '/plan-trial',
         '/admin',
         '/lesson'
     ];

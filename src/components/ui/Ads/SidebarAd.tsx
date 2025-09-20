@@ -22,7 +22,7 @@ const SidebarAd: React.FC = memo(() => {
             <h4 className="font-bold text-sm mb-2">Ưu đãi đặc biệt</h4>
             {/*300x250*/}
             <img
-                src="https://imback.pi7.org/downloadimage/resized/CusRM_91552images.png"
+                src="https://i.ibb.co/B54N44q2/images.jpg"
                 alt="Sidebar Advertisement"
                 className="w-full h-auto rounded mb-2"
                 loading="lazy"

@@ -39,3 +39,24 @@ export const updatePassword = async (data: PasswordUpdate): Promise<void> => {
         throw new Error("Lỗi mạng hoặc lỗi không xác định.");
     }
 };
+
+
+// ✅ Hàm cập nhật avatar (chỉ file)
+export const uploadAvatar = async (avatarFile: File): Promise<{ url: string }> => {
+    try {
+        const formData = new FormData();
+        formData.append("file", avatarFile); // Backend API "/api/uploads" mong đợi trường "file"
+
+        const response = await api.post("/api/uploads", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            throw new Error(error.response.data || "Tải avatar lên thất bại.");
+        }
+        throw new Error("Lỗi mạng hoặc lỗi không xác định.");
+    }
+};

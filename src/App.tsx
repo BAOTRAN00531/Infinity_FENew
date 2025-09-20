@@ -60,6 +60,7 @@ import AdPopupWrapper from "@components/ui/Ads/Manager/AdPopupWrapper";
 import {UserProfile} from "@/api/user";
 import {fetchUserProfile} from "@/api/userService";
 import CenterPopupAd from "@components/ui/Ads/CenterPopupAd";
+import {useUser} from "@/api/UserContext";
 
 
 /* ──────────────────────────────────────────────────────────────
@@ -148,23 +149,12 @@ function AuthGuard() {
 }
 
 function App() {
-    const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+    const { loading, userProfile, error } = useUser();
 
-
-
-    // Fetch thông tin người dùng ở cấp cao nhất
-    useEffect(() => {
-        const loadProfile = async () => {
-            try {
-                const data = await fetchUserProfile();
-                setUserProfile(data);
-            } catch (error) {
-                console.error("Lỗi khi tải thông tin người dùng:", error);
-                setUserProfile(null);
-            }
-        };
-        loadProfile();
-    }, []);
+    // Hiển thị loading nếu đang tải dữ liệu
+    if (loading) {
+        return <LoadingIndicator />;
+    }
 
     return (
         <>
