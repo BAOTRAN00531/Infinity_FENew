@@ -2,35 +2,48 @@ import Button from "../../components/reuseables/Button";
 import LessonProgressCircle from "../../components/reuseables/LessonCircleProgress";
 import NextLessonBox from "../../components/page-component/base/NextLessonBox";
 import TrialBox from "../../components/page-component/base/TrialBox";
-import {NavLink} from "react-router-dom";
+import {NavLink, useSearchParams} from "react-router-dom";
 import SidebarAd from "@components/ui/Ads/SidebarAd";
 import {Suspense, useEffect, useState} from "react";
 import {UserLesson} from "@/models/lesson/UserLesson";
 import {fetchUserLesson} from "@/services/userLessonService";
+import {fetchModuleById} from "@/api/Management/module.service";
+import {Module} from "@/api/types";
 
 function Learn() {
     const [lessons, setLessons] = useState<UserLesson[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [currentModule, setCurrentModule] = useState<Module | null>(null);
+    const [searchParams] = useSearchParams();
 
-    // Get moduleId from URL params or set default (could be from context/props)
-    const defaultModuleId = 2; // English course first module
+    // Get moduleId from URL params or set default
+    const moduleId = searchParams.get('moduleId') ? parseInt(searchParams.get('moduleId')!) : 2;
 
     useEffect(() => {
-        const loadUserLesson = async () => {
+        const loadData = async () => {
             try {
+                setLoading(true);
                 setError(null);
-                const lessons = await fetchUserLesson(defaultModuleId);
-                setLessons(lessons);
+                console.log('Loading lessons for moduleId:', moduleId);
+                
+                // Load both lessons and module info
+                const [lessonsData, moduleData] = await Promise.all([
+                    fetchUserLesson(moduleId),
+                    fetchModuleById(moduleId)
+                ]);
+                
+                setLessons(lessonsData);
+                setCurrentModule(moduleData);
             } catch (error) {
-                console.error('Failed to load lessons:', error);
+                console.error('Failed to load data:', error);
                 setError('Failed to load lessons. Please try again.');
             } finally {
                 setLoading(false);
             }
         };
-        loadUserLesson();
-    }, [defaultModuleId]);
+        loadData();
+    }, [moduleId]);
 
     if (loading) {
         return (
@@ -59,7 +72,7 @@ function Learn() {
             <aside className="max-w-[360px] h-full flex flex-col gap-8">
                 <div role="course" className="bg-accent flex items-start justify-between gap-4 rounded-2xl p-3">
                     <h2 className="be-vietnam-pro-black text-white text-base leading-5 max-w-[200px]">
-                        ENGLISH FOR BEGINNERS
+                        {currentModule ? currentModule.name.toUpperCase() : 'ĐANG TẢI...'}
                     </h2>
                     <NavLink to={"/hoc-phan"}>
                         <Button type="muted" className="p-2.5">
@@ -184,7 +197,7 @@ const LessonGrid = ({lessons, className}: LessonGridProps) => {
             {/* Fixed Row (second last): 2 centered lessons if they exist */}
             {lessons.length >= Math.max(4, 1 + threeLessonRows * 3 + 2) && (
                 <div className="flex-center gap-16">
-                    {[1, 3].map((colOffset, idx) => {
+                    {[1, 3].map((_, idx) => {
                         const lessonIdx = lessons.length - 3 + idx;
                         return lessons[lessonIdx] ? (
                             <div key={lessonIdx} className="flex-center justify-center min-w-40">

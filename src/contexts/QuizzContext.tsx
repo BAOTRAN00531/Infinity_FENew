@@ -7,6 +7,7 @@ const QUESTION_TYPES = {
   "MULTIPLE-CHOICE": "Multiple Choice",
   "FILL-IN-THE-BLANK": "Fill in the Blank",
   AUDIO: "Audio",
+  SPEAKING: "Speaking",
   MATCHING: "Matching",
   "SINGLE-TEXT": "Single Text",
   REARRANGE: "Rearrange",
@@ -207,6 +208,15 @@ const lesson = {
         "left-4": "right-4",
       },
     },
+    {
+      id: "question-8",
+      title: "Câu hỏi dạng speaking",
+      type: QUESTION_TYPES["SPEAKING"],
+      audioUrl: "/sounds/sample-sound.mp3", // Sample audio to listen to
+      correctAnswer: {
+        text: "What are you doing?", // Expected spoken answer
+      },
+    },
   ],
 };
 
@@ -218,6 +228,8 @@ const initialState = {
   progress: 12,
   selectedWords: [],
   textAnswer: "",
+  audioBlob: null,
+  audioUrl: null,
   hasAnswered: false,
   hasChecked: false,
   isCorrect: null,
@@ -271,6 +283,22 @@ function reducer(state, action) {
         hasChecked: false,
         isCorrect: null,
       };
+    case "SET_AUDIO_BLOB":
+      return {
+        ...state,
+        audioBlob: action.payload,
+      };
+    case "SET_AUDIO_URL":
+      return {
+        ...state,
+        audioUrl: action.payload,
+      };
+    case "CLEAR_AUDIO":
+      return {
+        ...state,
+        audioBlob: null,
+        audioUrl: null,
+      };
     default:
       return state;
   }
@@ -304,6 +332,7 @@ function QuizzProvider({ children }) {
     setAnswered(false);
     setTextAnswer("");
     clearWords();
+    clearAudio();
     resetCheck();
   };
 
@@ -323,6 +352,18 @@ function QuizzProvider({ children }) {
     dispatch({ type: "SET_USE_VOCAB" });
   };
 
+  const setAudioBlob = (blob) => {
+    dispatch({ type: "SET_AUDIO_BLOB", payload: blob });
+  };
+
+  const setAudioUrl = (url) => {
+    dispatch({ type: "SET_AUDIO_URL", payload: url });
+  };
+
+  const clearAudio = () => {
+    dispatch({ type: "CLEAR_AUDIO" });
+  };
+
   return (
     <quizzContext.Provider
       value={{
@@ -338,6 +379,9 @@ function QuizzProvider({ children }) {
         setChecked,
         resetCheck,
         setUseVocab,
+        setAudioBlob,
+        setAudioUrl,
+        clearAudio,
       }}
     >
       {children}

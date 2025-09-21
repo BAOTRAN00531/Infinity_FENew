@@ -97,7 +97,7 @@ api.interceptors.response.use(
                 localStorage.removeItem('access_token');
                 sessionStorage.removeItem('access_token');
                 // 🔁 Sửa redirect đúng route hiện tại
-                window.location.href = '/auth/login';
+                // window.location.href = '/auth/login';
                 return Promise.reject(refreshError);
             } finally {
                 isRefreshing = false;

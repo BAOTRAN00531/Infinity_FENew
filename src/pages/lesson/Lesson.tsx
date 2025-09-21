@@ -6,6 +6,7 @@ import Matching from "../../components/page-component/lesson/quizz/Matching";
 import Rearrange from "../../components/page-component/lesson/quizz/Rearrange";
 import SingleImage from "../../components/page-component/lesson/quizz/SingleImage";
 import SingleText from "../../components/page-component/lesson/quizz/SingleText";
+import SpeakingQuiz from "../../components/page-component/lesson/quizz/SpeakingQuiz";
 import {useQuizz} from "../../contexts/QuizzContext";
 import LessonLayout from "./Layout";
 
@@ -23,6 +24,9 @@ function Lesson() {
         switch (currentQuestion.type) {
             case QUESTION_TYPES["AUDIO"]:
                 return <AudioQuizz/>;
+
+            case QUESTION_TYPES["SPEAKING"]:
+                return <SpeakingQuiz/>;
 
             case QUESTION_TYPES["FILL-IN-THE-BLANK"]:
                 return <FillInTheBlank/>;

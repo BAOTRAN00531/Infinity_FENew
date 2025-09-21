@@ -173,9 +173,13 @@ export interface QuestionResponseDto {
 
 export const QUESTION_TYPE_MAP: Record<number, string> = {
     1: 'Câu hỏi trắc nghiệm - 1 đáp án đúng',
-    2: 'Câu hỏi trắc nghiệm - nhiều đáp án đúng',
+    1005:'Câu hỏi trắc nghiệm hình - 1 đáp án đúng',
     3: 'Sắp xếp từ thành câu đúng',
     4: 'Nhập câu trả lời từ bàn phím',
+    1002: 'Điền vào chỗ trống',
+    1003: 'Luyện nói',
+    1004: 'Ghép cặp',
+    1006: 'Luyện nghe'
 };
 
 

@@ -6,7 +6,7 @@ import { Plus, Edit, Trash2, Eye, FileText } from 'lucide-react'
 // Xử lý CRUD operations cho các phần học trong modules
 import { Button_admin } from '@/components/reuseables/Management/build/button_admin'
 import { Input } from '@/components/reuseables/Management/build/input'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/reuseables/Management/build/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/reuseables/Management/build/dialog'
 import { Badge } from '@/components/reuseables/Management/build/badge'
 import PartForm from '@/pages/Management/Form/PartForm'
 import PartDetails from '@/pages/Management/Detail/PartDetails'
@@ -136,6 +136,9 @@ const PartsCRUD: React.FC = () => {
             <DialogContent className="max-w-3xl rounded-3xl max-h-[80vh] overflow-y-scroll">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-black ">Create New Part</DialogTitle>
+                <DialogDescription>
+                  Create a new learning part by filling out the form below. Select the language, course, and module for this part.
+                </DialogDescription>
               </DialogHeader>
               <PartForm onSubmit={handleCreate} />
             </DialogContent>
@@ -230,6 +233,9 @@ const PartsCRUD: React.FC = () => {
           <DialogContent className="max-w-2xl rounded-3xl max-h-[80vh] overflow-y-scroll">
             <DialogHeader>
               <DialogTitle className="text-2xl font-black ">Edit Part</DialogTitle>
+              <DialogDescription>
+                Modify the details of this learning part. You can update the name, description, type, and other properties.
+              </DialogDescription>
             </DialogHeader>
             {selectedPart && (
                 <PartForm initialData={selectedPart} onSubmit={handleUpdate} />
@@ -241,6 +247,9 @@ const PartsCRUD: React.FC = () => {
           <DialogContent className="max-w-2xl rounded-3xl max-h-[80vh] overflow-y-scroll">
             <DialogHeader>
               <DialogTitle>Part Details</DialogTitle>
+              <DialogDescription>
+                View detailed information about this learning part including its content, status, and associated module.
+              </DialogDescription>
             </DialogHeader>
             {selectedPart && <PartDetails part={selectedPart} />}
           </DialogContent>
@@ -250,6 +259,9 @@ const PartsCRUD: React.FC = () => {
           <DialogContent className="max-w-md rounded-3xl">
             <DialogHeader>
               <DialogTitle>Delete Part</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this learning part? This action cannot be undone.
+              </DialogDescription>
             </DialogHeader>
             {selectedPart && (
                 <DeleteConfirmation
