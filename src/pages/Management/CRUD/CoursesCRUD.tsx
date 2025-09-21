@@ -5,7 +5,7 @@ import { Plus, Edit, Trash2, Eye, BookOpen, ArrowUpDown } from 'lucide-react';
 // Xử lý CRUD operations cho courses với giao diện thân thiện
 import { Button_admin } from '@/components/reuseables/Management/build/button_admin';
 import { Input_admin } from '@/components/reuseables/Management/build/input_admin';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/reuseables/Management/build/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/reuseables/Management/build/dialog';
 import { Badge } from '@/components/reuseables/Management/build/badge';
 import CourseForm from '@/pages/Management/Form/CourseForm';
 import CourseDetails from '@/pages/Management/Detail/CourseDetails';
@@ -135,6 +135,9 @@ const CoursesCRUD = () => {
             <DialogContent className="max-w-2xl rounded-3xl max-h-[80vh] overflow-y-scroll">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-black text-[hsl(var(--foreground))] dark:text-[hsl(var(--primary))] drop-shadow-md ">Create New Course</DialogTitle>
+                <DialogDescription>
+                  Create a new learning course by filling out the form below. Select the language, level, and other course details.
+                </DialogDescription>
               </DialogHeader>
               <CourseForm onSubmit={handleCreate} />
             </DialogContent>
@@ -264,6 +267,9 @@ const CoursesCRUD = () => {
           <DialogContent className="max-w-2xl rounded-3xl max-h-[80vh] overflow-y-scroll">
             <DialogHeader>
               <DialogTitle>Edit Course</DialogTitle>
+              <DialogDescription>
+                Modify the details of this learning course. You can update the name, description, language, level, and other properties.
+              </DialogDescription>
             </DialogHeader>
             {selectedCourse && (
                 <CourseForm initialData={selectedCourse} onSubmit={handleUpdate} />
@@ -276,6 +282,9 @@ const CoursesCRUD = () => {
           <DialogContent className="max-w-2xl rounded-3xl max-h-[80vh] overflow-y-scroll">
             <DialogHeader>
               <DialogTitle>Course Details</DialogTitle>
+              <DialogDescription>
+                View detailed information about this learning course including its modules, language, level, and other properties.
+              </DialogDescription>
             </DialogHeader>
             {selectedCourse && <CourseDetails course={selectedCourse} />}
           </DialogContent>
@@ -286,6 +295,9 @@ const CoursesCRUD = () => {
           <DialogContent className="max-w-md rounded-3xl">
             <DialogHeader>
               <DialogTitle>Delete Course</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this learning course? This action cannot be undone and will also delete all associated modules and lessons.
+              </DialogDescription>
             </DialogHeader>
             {selectedCourse && (
                 <DeleteConfirmation

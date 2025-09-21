@@ -5,7 +5,7 @@ import { Plus, Edit, Trash2, Eye, Layers, ArrowUpDown } from 'lucide-react';
 // Xử lý CRUD operations cho modules với tính năng tìm kiếm và sắp xếp
 import { Button_admin } from '@/components/reuseables/Management/build/button_admin';
 import { Input_admin } from '@/components/reuseables/Management/build/input_admin';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/reuseables/Management/build/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/reuseables/Management/build/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/reuseables/Management/build/select';
 import { Badge } from '@/components/reuseables/Management/build/badge';
 import ModuleForm from '@/pages/Management/Form/ModuleForm';
@@ -133,6 +133,9 @@ const ModulesCRUD = () => {
             <DialogContent className="max-w-2xl rounded-3xl max-h-[80vh] overflow-y-scroll">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-black text-[hsl(var(--foreground))] dark:text-[hsl(var(--primary))] drop-shadow-md">Create New Module</DialogTitle>
+                <DialogDescription>
+                  Create a new learning module by filling out the form below. Select the course and configure the module details.
+                </DialogDescription>
               </DialogHeader>
               <ModuleForm onSubmit={handleCreate} />
             </DialogContent>
@@ -250,6 +253,9 @@ const ModulesCRUD = () => {
           <DialogContent className="max-w-2xl rounded-3xl max-h-[80vh] overflow-y-scroll">
             <DialogHeader>
               <DialogTitle className="text-2xl font-black ">Edit Module</DialogTitle>
+              <DialogDescription>
+                Modify the details of this learning module. You can update the name, description, course, order, and other properties.
+              </DialogDescription>
             </DialogHeader>
             {selectedModule && (
                 <ModuleForm
@@ -264,6 +270,9 @@ const ModulesCRUD = () => {
           <DialogContent className="max-w-2xl rounded-3xl max-h-[80vh] overflow-y-scroll">
             <DialogHeader>
               <DialogTitle className="text-2xl font-black ">Module Details</DialogTitle>
+              <DialogDescription>
+                View detailed information about this learning module including its parts, course, order, and other properties.
+              </DialogDescription>
             </DialogHeader>
             {selectedModule && <ModuleDetails module={selectedModule} />}
           </DialogContent>
@@ -273,6 +282,9 @@ const ModulesCRUD = () => {
           <DialogContent className="max-w-md rounded-3xl">
             <DialogHeader>
               <DialogTitle className="text-2xl font-black ">Delete Module</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this learning module? This action cannot be undone and will also delete all associated parts/lessons.
+              </DialogDescription>
             </DialogHeader>
             {selectedModule && (
                 <DeleteConfirmation

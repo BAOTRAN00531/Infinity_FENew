@@ -210,7 +210,7 @@ const PartForm: React.FC<PartFormProps> = ({ initialData, onSubmit }) => {
     const formDataUpload = new FormData();
     formDataUpload.append('file', file);
     try {
-      const res = await api.post('/api/uploads', formDataUpload, {
+      const res = await api.post('/uploads', formDataUpload, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       const fileUrl = res.data.url;

@@ -42,9 +42,12 @@ const CourseForm: React.FC<CourseFormProps> = ({ initialData, onSubmit }) => {
 
   const fetchLanguages = async () => {
     try {
-      const res = await api.get('/api/languages');
+      console.log('[CourseForm] Fetching languages...');
+      const res = await api.get('/languages');
+      console.log('[CourseForm] Received languages:', res.data);
       setLanguages(res.data);
-    } catch {
+    } catch (error) {
+      console.error('[CourseForm] Error fetching languages:', error);
       toast.error('Failed to load languages', { autoClose: 1200 });
     }
   };
@@ -53,7 +56,7 @@ const CourseForm: React.FC<CourseFormProps> = ({ initialData, onSubmit }) => {
     const formDataUpload = new FormData();
     formDataUpload.append('file', file);
     try {
-      const res = await api.post('/api/uploads', formDataUpload, {
+      const res = await api.post('/uploads', formDataUpload, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setFormData(prev => ({ ...prev, thumbnail: res.data.url }));

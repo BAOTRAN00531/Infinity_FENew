@@ -163,7 +163,7 @@ const QuestionsCRUD = () => {
                 <Plus className="w-5 h-5 mr-2" /> Add Question
               </Button_admin>
             </DialogTrigger>
-            <DialogContent className="max-w-3xl rounded-3xl">
+            <DialogContent className="w-[90vw] max-w-[1280px] max-h-[85vh] rounded-3xl overflow-y-auto overflow-x-auto !left-1/2 !-translate-x-1/2">
               <DialogHeader>
                 <DialogTitle className="text-2xl font-bold">Create New Question</DialogTitle>
               </DialogHeader>
@@ -298,24 +298,24 @@ const QuestionsCRUD = () => {
         {/* Edit Dialog */}
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
           <DialogContent
-              className="max-w-3xl rounded-3xl max-h-[80vh] overflow-y-auto"
+              className="w-[90vw] max-w-[1280px] rounded-3xl max-h-[85vh] overflow-y-auto overflow-x-auto !left-1/2 !-translate-x-1/2"
           >
             <DialogHeader>
-              <DialogTitle className="text-2xl font-bold">Create New Question</DialogTitle>
+              <DialogTitle className="text-2xl font-bold">Edit Question</DialogTitle>
             </DialogHeader>
             <QuestionForm
                 modules={modules}
                 lessons={lessons}
                 onModuleChange={handleModuleSelect}
-                onSubmit={handleCreate}
+                onSubmit={handleUpdate}
+                initialData={selectedQuestion}
             />
           </DialogContent>
-
         </Dialog>
 
         {/* View Dialog */}
         <Dialog open={isViewOpen} onOpenChange={setIsViewOpen}>
-          <DialogContent className="max-w-2xl rounded-3xl max-h-[80vh] overflow-y-scroll">
+          <DialogContent className="w-[80vw] max-w-[1000px] rounded-3xl max-h-[85vh] overflow-y-auto overflow-x-auto !left-1/2 !-translate-x-1/2">
             <DialogHeader>
               <DialogTitle className="text-2xl font-black">Question Details</DialogTitle>
             </DialogHeader>
