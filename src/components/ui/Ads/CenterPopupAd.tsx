@@ -1,4 +1,3 @@
-// src/components/ui/Ads/CenterPopupAd.tsx
 import React, { useState, useEffect, memo } from 'react';
 import { XCircle } from 'lucide-react';
 import Button from "@/components/reuseables/Button";
@@ -8,17 +7,17 @@ const CenterPopupAd: React.FC = memo(() => {
     const [isVisible, setIsVisible] = useState(false);
     const location = useLocation();
 
-    // Không hiển thị trên các trang nhất định
-    const excludedRoutes = ['/payment', '/admin', '/auth'];
+    // THAY ĐỔI: Thay excludedRoutes bằng includedRoutes để logic chắc chắn hơn
+    const includedRoutes = ['/', '/courses', '/lessons', '/profile'];
 
     useEffect(() => {
-        if (excludedRoutes.some(route => location.pathname.startsWith(route))) {
+        if (!includedRoutes.some(route => location.pathname.startsWith(route))) {
             return;
         }
 
         const showAd = () => {
-            // Ngẫu nhiên hiển thị sau 2 đến 3 phút (120000 - 180000 ms)
-            const randomDelay = Math.random() * 60000 + 120000;
+            // THAY ĐỔI: Tăng delay thành 3-5 phút (180000 - 300000 ms)
+            const randomDelay = Math.random() * 120000 + 180000;
             const timer = setTimeout(() => {
                 setIsVisible(true);
             }, randomDelay);
@@ -47,16 +46,16 @@ const CenterPopupAd: React.FC = memo(() => {
                     <XCircle size={28} />
                 </button>
                 <div className="text-center">
-                    <h2 className="text-2xl font-bold mb-4">QUẢNG CÁO ĐẶC BIỆT</h2>
+                    <h2 className="text-2xl font-bold mb-4">KHÓA HỌC ĐẶC BIỆT</h2>
                     {/*300x200*/}
                     <img
                         src="https://i.ibb.co/pSpKVQd/Adult-capybara.webp"
                         alt="Pop-up Advertisement"
                         className="w-full h-auto rounded-lg mb-4"
-                        loading="lazy" // Tối ưu tải ảnh
+                        loading="lazy"
                     />
                     <p className="text-sm text-gray-600 mb-6">
-                        Đừng bỏ lỡ cơ hội nhận ưu đãi cực hấp dẫn. Nhấp ngay!
+                        Nâng cấp VIP để học không giới hạn và nhận ưu đãi khóa học mới!
                     </p>
                     <Button type="primary" onClick={handleClose}>
                         Xem chi tiết

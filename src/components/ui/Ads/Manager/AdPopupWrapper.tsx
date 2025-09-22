@@ -1,8 +1,16 @@
-// src/components/layout/AdPopupWrapper.tsx
 import React, { useState, useEffect, Suspense, lazy } from "react";
 import { useLocation } from "react-router-dom";
 import { UserProfile } from "@/api/user";
-import {useAdvertisements} from "@/api/Ads/useAdvertisements";
+import { useAdvertisements } from "@/api/Ads/useAdvertisements";
+import { jwtDecode } from 'jwt-decode'; // THAY ĐỔI: Thêm import jwt-decode
+
+// THAY ĐỔI: Định nghĩa interface cho DecodedToken giống như trong ProtectedRoute
+interface DecodedToken {
+    role: string;
+    sub: string;
+    exp: number;
+    iat: number;
+}
 
 // Lazy load các component quảng cáo
 const RandomAdPopup = lazy(() => import("@components/ui/Ads/RandomAdPopup"));
@@ -23,7 +31,23 @@ const AdPopupWrapper: React.FC<AdPopupWrapperProps> = ({ userProfile, children }
     const location = useLocation();
 
     // Hook kiểm tra điều kiện hiển thị ads
-    const { showAds } = useAdvertisements(userProfile, location.pathname);
+    let { showAds } = useAdvertisements(userProfile, location.pathname);
+
+    // THAY ĐỔI: Kiểm tra userRole từ token và isVip từ userProfile
+    const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
+    let userRole: string | null = null;
+    if (token) {
+        try {
+            const decodedToken: DecodedToken = jwtDecode<DecodedToken>(token);
+            userRole = decodedToken.role;
+        } catch (error) {
+            console.error('Invalid token:', error);
+        }
+    }
+    // Ẩn quảng cáo nếu user là VIP hoặc ROLE_ADMIN
+    if (userProfile?.isVip || userRole === 'ROLE_ADMIN') {
+        showAds = false;
+    }
 
     const [isRandomPopupVisible, setIsRandomPopupVisible] = useState(false);
     const [isCenterPopupEnabled, setIsCenterPopupEnabled] = useState(false);

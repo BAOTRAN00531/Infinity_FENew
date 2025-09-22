@@ -1,4 +1,3 @@
-// src/components/ui/Ads/RandomAdPopup.tsx
 import React, { useState, useEffect, memo } from 'react';
 import { cn } from "@/lib/utils";
 import { XCircle } from 'lucide-react';
@@ -14,13 +13,11 @@ const RandomAdPopup: React.FC<RandomAdPopupProps> = memo(({ onClose }) => {
 
     useEffect(() => {
         const showAfterDelay = () => {
-            // Hiển thị sau 1 khoảng thời gian ngẫu nhiên từ 5 đến 15 giây
-            const randomDelay = Math.random() * 10000 + 5000;
+            // THAY ĐỔI: Tăng delay thành 30-60 giây để ít phiền hơn cho học viên free
+            const randomDelay = Math.random() * 30000 + 30000;
             setTimeout(() => {
-                // Đặt vị trí ngẫu nhiên trên màn hình
-                const randomTop = Math.random() * 60 + 20; // Từ 20% đến 80% từ trên xuống
-                const randomLeft = Math.random() * 60 + 20; // Từ 20% đến 80% từ trái sang
-                setPosition({ top: `${randomTop}%`, left: `${randomLeft}%` });
+                // THAY ĐỔI: Đặt vị trí giữa màn hình thay vì random
+                setPosition({ top: `50%`, left: `50%` });
                 setIsVisible(true);
             }, randomDelay);
         };
@@ -51,9 +48,9 @@ const RandomAdPopup: React.FC<RandomAdPopupProps> = memo(({ onClose }) => {
                 <XCircle size={24} />
             </button>
 
-            <h3 className="font-bold text-lg mb-2">ĐỪNG BỎ LỠ!</h3>
+            <h3 className="font-bold text-lg mb-2">ĐỪNG BỎ LỠ KHÓA HỌC!</h3> {/* THAY ĐỔI: Nội dung phù hợp học tập */}
             <p className="text-sm">
-                Bạn đang bỏ lỡ những tính năng siêu VIP. Hãy nâng cấp tài khoản ngay để trải nghiệm không giới hạn!
+                Nâng cấp VIP để học không giới hạn và mở khóa bài học nâng cao!
             </p>
             <div className="mt-4 text-center">
                 <Button className="font-bold" type="cta" onClick={handleClose}>
