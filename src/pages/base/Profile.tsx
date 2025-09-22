@@ -1,5 +1,3 @@
-// src/pages/Profile.tsx
-
 import React, { useEffect, useState, useRef } from 'react';
 import { PencilIcon, CrownIcon } from "lucide-react";
 import TrialBox from "../../components/page-component/base/TrialBox";
@@ -10,16 +8,16 @@ import { toast } from "sonner";
 import { clearAuthData } from "@/utils/authUtils";
 import { logout } from "@/api/authService";
 import OrderHistoryButton from "@components/reuseables/Management/history/OrderHistoryButton";
-
-// ✅ Import các hàm API cần thiết
+import { useUser } from "@/api/UserContext"; // THAY ĐỔI: Thêm import useUser
 
 import type { UserProfile, UserProfileUpdate, PasswordUpdate } from "@/api/user";
 
 import UserAvatar from "@components/ui/UserAvatar";
-import {fetchUserProfile, updatePassword, updateUserProfile, uploadAvatar} from "@/api/userService";
+import { fetchUserProfile, updatePassword, updateUserProfile, uploadAvatar } from "@/api/userService";
 
 function Profile() {
     const navigate = useNavigate();
+    const { refetchProfile } = useUser(); // THAY ĐỔI: Lấy refetchProfile từ useUser
     const [loggingOut, setLoggingOut] = useState(false);
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
@@ -62,6 +60,9 @@ function Profile() {
             await logout();
         } finally {
             clearAuthData();
+            localStorage.removeItem('justLoggedIn'); // THAY ĐỔI: Xóa justLoggedIn khi đăng xuất
+            localStorage.removeItem('loginTimestamp');
+            refetchProfile(); // THAY ĐỔI: Gọi refetchProfile để cập nhật userProfile
             toast.success("Đã đăng xuất thành công");
             navigate("/auth/login", { replace: true });
             setLoggingOut(false);
@@ -85,13 +86,11 @@ function Profile() {
         try {
             let newAvatarUrl = userProfile?.avatar;
 
-            // ✅ Bước 1: Tải file avatar lên server nếu có
             if (selectedAvatar) {
                 const uploadResponse = await uploadAvatar(selectedAvatar);
                 newAvatarUrl = uploadResponse.url;
             }
 
-            // ✅ Bước 2: Cập nhật thông tin profile bao gồm URL avatar mới
             const profileDataToUpdate: UserProfileUpdate = {
                 ...formState,
                 avatar: newAvatarUrl,
@@ -101,7 +100,6 @@ function Profile() {
 
             toast.success("Cập nhật thông tin thành công.");
 
-            // Cập nhật state sau khi thành công để UI hiển thị ngay
             setUserProfile(prev => prev ? { ...prev, ...profileDataToUpdate } : null);
             setSelectedAvatar(null);
 

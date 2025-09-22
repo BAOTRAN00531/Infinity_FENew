@@ -1,4 +1,3 @@
-// src/components/ads/FixedFooterAd.tsx
 import React, { memo } from "react";
 
 interface FixedFooterAdProps {

@@ -1,15 +1,19 @@
-// src/components/ui/Ads/SidebarAd.tsx
 import React, { memo, useState } from 'react';
 import { X } from 'lucide-react';
+import { useUser } from "@/api/UserContext"; // THAY ĐỔI: Thêm import useUser
 
 const SidebarAd: React.FC = memo(() => {
+    const { userProfile, loading } = useUser(); // THAY ĐỔI: Lấy userProfile từ UserContext
     const [isVisible, setIsVisible] = useState(true);
+
+    // THAY ĐỔI: Ẩn SidebarAd nếu đang tải hoặc user là VIP
+    if (loading || userProfile?.isVip || !isVisible) {
+        return null;
+    }
 
     const handleClose = () => {
         setIsVisible(false);
     };
-
-    if (!isVisible) return null;
 
     return (
         <div className="bg-white rounded-lg p-4 shadow-lg border border-gray-200 mb-4 relative">
@@ -19,7 +23,7 @@ const SidebarAd: React.FC = memo(() => {
             >
                 <X size={16} />
             </button>
-            <h4 className="font-bold text-sm mb-2">Ưu đãi đặc biệt</h4>
+            <h4 className="font-bold text-sm mb-2">Ưu đãi khóa học VIP</h4>
             {/*300x250*/}
             <img
                 src="https://i.ibb.co/B54N44q2/images.jpg"
@@ -28,8 +32,7 @@ const SidebarAd: React.FC = memo(() => {
                 loading="lazy"
             />
             <p className="text-xs text-gray-600 mb-2">
-                Khám phá tài lộc quá lớn ngay
-                Uống xong thận bao khỏe
+                Khám phá khóa học mới với ưu đãi lớn. Học ngay để nâng cao kỹ năng!
             </p>
             <button className="w-full bg-blue-500 hover:bg-blue-600 text-white text-xs py-2 px-4 rounded">
                 Khám phá ngay
