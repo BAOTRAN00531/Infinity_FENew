@@ -218,6 +218,7 @@ function App() {
                     }
                 >
                     <Route path="/hoc" element={<Learn />} />
+                    <Route path="/lesson/:id" element={<Lesson />} />
                     <Route path="/phat-am" element={<Pronun />} />
                     <Route path="/hoc-phan" element={<StudyPart />} />
                     <Route path="/khoa-hoc" element={<Courses />} />

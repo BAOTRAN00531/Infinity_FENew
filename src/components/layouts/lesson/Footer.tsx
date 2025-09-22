@@ -1,6 +1,8 @@
 // @ts-nocheck
 import { BrickWallIcon, TextCursorInputIcon } from "lucide-react";
 import { useQuizz } from "../../../contexts/QuizzContext";
+import { quizService } from "../../../api/Management/quiz.service";
+import { IMPLEMENTED_QUESTION_TYPE } from "../../../contexts/QuizzContext";
 import Button from "../../reuseables/Button";
 import { cn } from "../../../lib/utils";
 
@@ -13,12 +15,15 @@ function Footer({ showVocab = false, showToggleVocab = false, onCheckAnswer }) {
       selectedWords,
       hasAnswered,
       textAnswer,
+      selectedOptionIds,
+      isSubmittingAnswer,
     },
     toggleUseVocab,
     addWord,
     removeWord,
     setChecked,
     nextQuestion,
+    setSubmittingAnswer,
   } = useQuizz();
 
   const currentQuestion = questions[currentQuestionIndex];
@@ -34,22 +39,49 @@ function Footer({ showVocab = false, showToggleVocab = false, onCheckAnswer }) {
     }
   };
 
-  const checkAnswer = () => {
-    let isCorrectAnswer = false;
+  const checkAnswer = async () => {
+    // Check if this is a new implemented question type that should use API
+    if (currentQuestion.type === IMPLEMENTED_QUESTION_TYPE.MULTIPLE_SINGLE_CHOICE ||
+        currentQuestion.type === IMPLEMENTED_QUESTION_TYPE.MULTIPLE_CHOICE_MULTI) {
+      try {
+        setSubmittingAnswer(true);
+        console.log('Submitting answer via API:', {
+          questionId: currentQuestion.id,
+          selectedOptionIds
+        });
 
-    if (useVocab) {
-      // Check if selected words match any correct answer combination
-      const selectedText = selectedWords.map((w) => w.text).join(" ");
-      isCorrectAnswer = currentQuestion.correctAnswer.arr.some(
-        (combo) => combo.map((w) => w.text).join(" ") === selectedText
-      );
+        const response = await quizService.submitSingleQuestion(
+          currentQuestion.id,
+          selectedOptionIds
+        );
+
+        console.log('API Response:', response);
+        setChecked(response.correct);
+      } catch (error) {
+        console.error('Failed to submit answer:', error);
+        // Fallback to local checking if API fails
+        setChecked(false);
+      } finally {
+        setSubmittingAnswer(false);
+      }
     } else {
-      // Check text answer
-      isCorrectAnswer =
-        textAnswer.trim() === currentQuestion.correctAnswer.text;
-    }
+      // Fallback to local checking for old question types
+      let isCorrectAnswer = false;
 
-    setChecked(isCorrectAnswer);
+      if (useVocab) {
+        // Check if selected words match any correct answer combination
+        const selectedText = selectedWords.map((w) => w.text).join(" ");
+        isCorrectAnswer = currentQuestion.correctAnswer.arr.some(
+          (combo) => combo.map((w) => w.text).join(" ") === selectedText
+        );
+      } else {
+        // Check text answer
+        isCorrectAnswer =
+          textAnswer.trim() === currentQuestion.correctAnswer.text;
+      }
+
+      setChecked(isCorrectAnswer);
+    }
   };
 
   const handleSkip = () => {
@@ -109,13 +141,10 @@ function Footer({ showVocab = false, showToggleVocab = false, onCheckAnswer }) {
           <Button
             className="mt-4"
             type="primary"
-            disabled={!hasAnswered}
-            onClick={() => {
-              checkAnswer();
-              console.log("Checking answer...");
-            }}
+            disabled={!hasAnswered || isSubmittingAnswer}
+            onClick={checkAnswer}
           >
-            Kiểm tra
+            {isSubmittingAnswer ? "Đang kiểm tra..." : "Kiểm tra"}
           </Button>
         </div>
       </div>

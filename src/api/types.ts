@@ -406,6 +406,54 @@ export interface StudentQuestion {
     options: StudentQuestionOption[];
 }
 
+// Types for StudentQuizService integration
+export interface StudentQuizOption {
+    id: number;
+    optionText: string;
+    position: number;
+    imageUrl?: string;
+}
+
+export interface StudentQuizAnswer {
+    id: number;
+    answerText: string;
+    caseSensitive: boolean;
+    position: number;
+}
+
+export interface StudentQuizQuestion {
+    id: number;
+    questionText: string;
+    type: string;
+    difficulty: string;
+    points: number;
+    media?: MediaDto;
+    isCompleted: boolean;
+    options: StudentQuizOption[];
+    answers: StudentQuizAnswer[];
+}
+
+export interface QuizSubmission {
+    answers: Record<number, number>;
+}
+
+export interface QuizResult {
+    totalQuestions: number;
+    correctAnswers: number;
+    score: number;
+    results: Record<number, boolean>;
+}
+
+export interface SingleQuestionSubmit {
+    questionId: number;
+    questionOptionIds: number[];
+}
+
+export interface SingleQuestionSubmitResponse {
+    correct: boolean;  // Lombok @Data serializes isCorrect as correct
+    points: number;
+}
+
 export interface LessonContentAreaProps {
     selectedLesson: Lesson | null;
     isQuizMode: boolean;

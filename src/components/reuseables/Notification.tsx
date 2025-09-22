@@ -6,7 +6,7 @@ import { motion } from "motion/react";
 import { useQuizz } from "../../contexts/QuizzContext";
 
 function Notification({ type }) {
-  const { nextQuestion } = useQuizz();
+  const { nextQuestion, resetCheck } = useQuizz();
 
   const renderIcon = () => {
     switch (type) {
@@ -70,14 +70,16 @@ function Notification({ type }) {
             </span>
           </div>
           <Button
-            onClick={nextQuestion}
+            onClick={type === "incorrect" ? resetCheck : nextQuestion}
             className={cn([
               type === "correct" && "bg-primary shadow-primary",
               type === "incorrect" && "bg-red-500 shadow-red-500",
               type === "skip" && "bg-accent shadow-accent",
             ])}
           >
-            <span className="font-bold">Tiếp tục</span>
+            <span className="font-bold">
+              {type === "incorrect" ? "Thử lại" : "Tiếp tục"}
+            </span>
           </Button>
         </div>
       </div>
