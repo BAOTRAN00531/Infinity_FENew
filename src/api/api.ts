@@ -7,7 +7,7 @@ const api: AxiosInstance = axios.create({
     baseURL: isDev ? 'http://localhost:8080/api' : (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'),
     withCredentials: true, // Cho phép gửi cookie (httpOnly)
     headers: { 'Content-Type': 'application/json' },
-    timeout: 10000, // Timeout 10s để tránh request treo
+    timeout: 30000, // Timeout 30s để xử lý TTS operations
 });
 
 // Biến để theo dõi trạng thái refresh token
