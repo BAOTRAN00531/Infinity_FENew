@@ -248,7 +248,7 @@ const FillInTheBlankEditor: React.FC<Props> = ({ data, onChange }) => {
                       Blank {blankIndex + 1}:
                     </Label>
                     <Input_admin
-                      value={correctAnswers[blankIndex] || ''}
+                      value={correctAnswers[blankIndex] ?? ''}
                       onChange={(e) => updateCorrectAnswer(blankIndex, e.target.value)}
                       className="w-full rounded-xl border-2 border-gray-200 h-10 text-base"
                       placeholder={`Answer for blank ${blankIndex + 1}`}

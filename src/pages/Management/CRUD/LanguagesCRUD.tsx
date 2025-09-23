@@ -40,7 +40,7 @@ const LanguagesCRUD = () => {
   const fetchLanguages = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/api/languages/with-course-count');
+      const response = await api.get('/languages/with-course-count');
       const langs = response.data.map((lang: any) => ({
         id: lang.id,
         name: lang.name,
@@ -61,7 +61,7 @@ const LanguagesCRUD = () => {
 
   const handleCreate = async (formData: FormData) => {
     try {
-      await api.post('/api/languages', formData, {
+      await api.post('/languages', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       toast.success('Language created');
@@ -187,7 +187,13 @@ const LanguagesCRUD = () => {
             >
               <div className="text-center mb-4">
                 <div className="text-4xl mb-3">
-                  <img src={language.flag} alt="Flag" className="w-10 h-10 rounded-full mx-auto" />
+                  {language.flag ? (
+                    <img src={language.flag} alt="Flag" className="w-10 h-10 rounded-full mx-auto" />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full mx-auto bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
+                      {language.code?.toUpperCase() || 'FL'}
+                    </div>
+                  )}
                 </div>
                 <h3 className="text-xl font-black text-gray-800 mb-1">{language.name}</h3>
                 <p className="text-sm text-gray-500 uppercase tracking-wider">{language.code}</p>

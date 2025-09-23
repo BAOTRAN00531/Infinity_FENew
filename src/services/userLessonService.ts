@@ -4,7 +4,7 @@ import api from "@/api/api";
 
 export const fetchUserLesson = async (moduleId: number): Promise<UserLesson[]> => {
     try {
-        const response = await api.get("/api/student/lesson", {
+        const response = await api.get("/student/lesson", {
             params: {moduleId}
         });
         return response.data;

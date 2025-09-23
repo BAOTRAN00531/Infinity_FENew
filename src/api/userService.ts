@@ -7,7 +7,7 @@ import { toast } from "sonner"; // ✅ Import toast để hiển thị thông b�
 // ✅ Hàm lấy thông tin hồ sơ
 export const fetchUserProfile = async (): Promise<UserProfile> => {
     try {
-        const response = await api.get("/api/users/me");
+        const response = await api.get("/users/me");
         return response.data;
     } catch (error) {
         throw new Error("Không thể tải thông tin hồ sơ.");
@@ -17,7 +17,7 @@ export const fetchUserProfile = async (): Promise<UserProfile> => {
 // ✅ Hàm cập nhật thông tin hồ sơ
 export const updateUserProfile = async (data: UserProfileUpdate): Promise<void> => {
     try {
-        await api.post("/api/users/me/profile", data);
+        await api.post("/users/me/profile", data);
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
             // Ném lỗi với thông báo từ backend
@@ -30,7 +30,7 @@ export const updateUserProfile = async (data: UserProfileUpdate): Promise<void> 
 // ✅ Hàm cập nhật mật khẩu
 export const updatePassword = async (data: PasswordUpdate): Promise<void> => {
     try {
-        await api.post("/api/users/me/password", data);
+        await api.post("/users/me/password", data);
     } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
             // Ném lỗi với thông báo từ backend
@@ -47,7 +47,7 @@ export const uploadAvatar = async (avatarFile: File): Promise<{ url: string }> =
         const formData = new FormData();
         formData.append("file", avatarFile); // Backend API "/api/uploads" mong đợi trường "file"
 
-        const response = await api.post("/api/uploads", formData, {
+        const response = await api.post("/uploads", formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },

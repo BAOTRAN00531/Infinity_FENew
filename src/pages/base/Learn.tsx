@@ -18,7 +18,8 @@ function Learn() {
     const [searchParams] = useSearchParams();
 
     // Get moduleId from URL params or set default
-    const moduleId = searchParams.get('moduleId') ? parseInt(searchParams.get('moduleId')!) : 2;
+    const urlModuleId = searchParams.get('moduleId') ? parseInt(searchParams.get('moduleId')!) : null;
+    const moduleId = (urlModuleId && urlModuleId >= 1 && urlModuleId <= 10) ? urlModuleId : 2;
 
     useEffect(() => {
         const loadData = async () => {

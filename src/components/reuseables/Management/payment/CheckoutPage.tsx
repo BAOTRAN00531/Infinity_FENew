@@ -13,7 +13,7 @@ const CheckoutPage: React.FC = () => {
 
     const handleSubmit = async () => {
         try {
-            const res = await api.post('/api/orders/create', {
+            const res = await api.post('/orders/create', {
                 courseId,
                 paymentMethod: method,
                 fullName,

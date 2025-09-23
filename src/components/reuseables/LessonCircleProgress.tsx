@@ -66,7 +66,11 @@ export default function MyArcProgress({...props}) {
                             title="Go to lesson"
                             onClick={props?.onClick}
                         >
-                            <DynamicIcon name={props?.lesson?.icon} color="white" size={48}/>
+                            {props?.lesson?.icon && typeof props.lesson.icon === 'string' && props.lesson.icon.trim() ? (
+                                <DynamicIcon name={props.lesson.icon} color="white" size={48}/>
+                            ) : (
+                                <div className="w-12 h-12 flex items-center justify-center text-white text-2xl">📚</div>
+                            )}
                             {props?.lesson?.status === "up-comming" && (
                                 <div className="absolute group-active:invisible group-active:opacity-0">
                                     <ChatBox>BẮT ĐẦU</ChatBox>

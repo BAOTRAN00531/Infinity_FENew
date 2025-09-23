@@ -170,7 +170,7 @@ const ModuleForm: React.FC<ModuleFormProps> = ({ initialData, onSubmit }) => {
             Language {initialData && '(Auto-filled)'}
           </Label>
           <Select
-              value={selectedLanguageId?.toString() || ''}
+              value={selectedLanguageId?.toString() ?? ''}
               onValueChange={handleLanguageChange}
           >
             <SelectTrigger className="rounded-2xl border-2 border-gray-200">
@@ -242,7 +242,7 @@ const ModuleForm: React.FC<ModuleFormProps> = ({ initialData, onSubmit }) => {
             <Label className="text-sm font-bold text-gray-700 dark:text-gray-200">Order</Label>
             <Input_admin
                 type="number"
-                value={formData.order}
+                value={formData.order ?? 1}
                 onChange={e => setFormData({ ...formData, order: Number(e.target.value) })}
                 className="rounded-2xl border-2 border-gray-200 focus:border-blue-400"
                 min="1"

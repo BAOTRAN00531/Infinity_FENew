@@ -51,7 +51,7 @@ const OrderCRUD = () => {
     });
 
     const fetchOrders = () => {
-        api.get('/api/admin/history')
+        api.get('/admin/history')
             .then((res) => {
                 const normalizedOrders = res.data.map((order: any) => ({
                     ...order,

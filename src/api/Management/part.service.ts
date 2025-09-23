@@ -35,7 +35,7 @@ export const fetchParts = async (moduleId?: number): Promise<Part[]> => {
         try {
             const params = moduleId ? { moduleId } : {};
             console.log(`[Parts API] Fetching parts from backend with params:`, params);
-            const response = await api.get<Part[]>('/api/lessons', { params });
+            const response = await api.get<Part[]>('/lessons', { params });
             const data = response.data;
             console.log(`[Parts API] Received parts:`, data);
             
@@ -115,7 +115,7 @@ export const createPart = async (data: PartRequest): Promise<Part> => {
         };
         
         console.log('[Parts API] Sending data:', lessonDto);
-        const response = await api.post<Part>('/api/lessons', lessonDto);
+        const response = await api.post<Part>('/lessons', lessonDto);
         console.log('[Parts API] Part created successfully:', response.data);
         return response.data;
     } catch (error) {

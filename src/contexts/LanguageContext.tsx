@@ -1,122 +1,83 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { fetchEnglishLanguage, fetchLanguages } from "../api/languageService";
-import { Language } from "../api/types";
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { lexiconApi } from '@/api/Management/lexiconApi';
+import type { Language } from '@/api/Management/adminQuestionApi';
 
-// Mock data generator for languages
-const generateMockLanguages = (): Language[] => {
-  return [
-    {
-      id: 1,
-      code: "en",
-      name: "English",
-      flag: "🇺🇸",
-      difficulty: "Beginner",
-      popularity: "High"
-    },
-    {
-      id: 2,
-      code: "es",
-      name: "Spanish",
-      flag: "🇪🇸",
-      difficulty: "Beginner",
-      popularity: "High"
-    },
-    {
-      id: 3,
-      code: "fr",
-      name: "French",
-      flag: "🇫🇷",
-      difficulty: "Intermediate",
-      popularity: "Medium"
-    },
-    {
-      id: 4,
-      code: "de",
-      name: "German",
-      flag: "🇩🇪",
-      difficulty: "Intermediate",
-      popularity: "Medium"
-    },
-    {
-      id: 5,
-      code: "ja",
-      name: "Japanese",
-      flag: "🇯🇵",
-      difficulty: "Advanced",
-      popularity: "Low"
-    }
-  ];
+type LanguageContextValue = {
+    languages: Language[];
+    currentLanguage: Language | null;
+    setCurrentLanguage: (lang: Language | null) => void;
+    loading: boolean;
+    error: string | null;
+    reload: () => Promise<void>;
 };
 
-interface LanguageContextType {
-  currentLanguage: Language | null;
-  languages: Language[];
-  setCurrentLanguage: (language: Language) => void;
-  loading: boolean;
-  error: string | null;
-}
+const LanguageContext = createContext<LanguageContextValue>({
+    languages: [],
+    currentLanguage: null,
+    setCurrentLanguage: () => {},
+    loading: false,
+    error: null,
+    reload: async () => {},
+});
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const [languages, setLanguages] = useState<Language[]>([]);
+    const [currentLanguage, setCurrentLanguage] = useState<Language | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
-export const useLanguage = () => {
-  const context = useContext(LanguageContext);
-  if (!context) {
-    throw new Error("useLanguage must be used within a LanguageProvider");
-  }
-  return context;
-};
-
-interface LanguageProviderProps {
-  children: ReactNode;
-}
-
-export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
-  const [currentLanguage, setCurrentLanguage] = useState<Language | null>(null);
-  const [languages, setLanguages] = useState<Language[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const initializeLanguages = async () => {
-      try {
+    const fetchAll = async () => {
         setLoading(true);
         setError(null);
-        
-        // Lấy danh sách ngôn ngữ
-        const allLanguages = await fetchLanguages();
-        setLanguages(allLanguages);
+        try {
+            // Ưu tiên gọi API thật từ lexiconApi
+            const resp = await lexiconApi.languages.getAll(); // <- trả array trực tiếp
+            const langs: Language[] = Array.isArray(resp)
+                ? resp
+                // nếu lỡ backend nào đó bọc {result: []} thì vẫn support được:
+                : (Array.isArray((resp as any)?.result) ? (resp as any).result : []);
 
-        // Mặc định chọn tiếng Anh (United States)
-        const english = await fetchEnglishLanguage();
-        setCurrentLanguage(english);
-      } catch (err) {
-        // Silently fallback to mock data to avoid console spam
-        console.log("[Languages API] Using mock data for languages");
-        
-        // Fallback to mock data
-        const mockLanguages = generateMockLanguages();
-        setLanguages(mockLanguages);
-        setCurrentLanguage(mockLanguages[0]); // Set first language as default
-        setError(null); // Clear error since we have fallback data
-      } finally {
-        setLoading(false);
-      }
+            if (!Array.isArray(langs)) {
+                throw new Error('Invalid languages payload');
+            }
+
+            setLanguages(langs as Language[]); // ép kiểu để TS đừng “khó”
+            const english =
+                (langs as Language[]).find(l => (l.code || '').toLowerCase().startsWith('en')) ||
+                (langs as Language[])[0] ||
+                ({ code: 'en-US', name: 'English (United States)' } as Language);
+
+            setCurrentLanguage(english as Language);
+        } catch (err) {
+            console.error('Languages API failed → using mock data', err);
+            const mock: Language[] = [
+                { id: 1 as any, code: 'en-US', name: 'English (United States)' } as any,
+            ];
+            setLanguages(mock);
+            setCurrentLanguage(mock[0]);
+            setError('Languages API error');
+        } finally {
+            setLoading(false);
+        }
     };
 
-    initializeLanguages();
-  }, []);
+    useEffect(() => {
+        fetchAll();
+    }, []);
 
-  const value = {
-    currentLanguage,
-    languages,
-    setCurrentLanguage,
-    loading,
-    error
-  };
+    const value = useMemo<LanguageContextValue>(
+        () => ({
+            languages,
+            currentLanguage,
+            setCurrentLanguage,
+            loading,
+            error,
+            reload: fetchAll,
+        }),
+        [languages, currentLanguage, loading, error]
+    );
 
-  return (
-    <LanguageContext.Provider value={value}>
-      {children}
-    </LanguageContext.Provider>
-  );
+    return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 };
+
+export const useLanguage = () => useContext(LanguageContext);

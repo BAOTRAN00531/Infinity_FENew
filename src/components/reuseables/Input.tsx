@@ -10,7 +10,7 @@ function Input({ label, value, id, className, disabled, ...props }) {
       <input
         type="text"
         id={id || "input"}
-        value={value || ""}
+        value={value ?? ""}
         disabled={disabled}
         className={cn([
           "px-4 py-2.5 rounded-2xl border-2 border-slate-300 text-slate-600 placeholder:text-slate-300",

@@ -25,7 +25,7 @@ class SpeakingService {
    * AI Assessment với transcript (không cần audio)
    */
   async assessWithAi(request: SpeakingAssessmentRequest): Promise<SpeakingScoreResponse> {
-    const response = await api.post('/api/ai/speaking/ai-assess', request);
+    const response = await api.post('/ai/speaking/ai-assess', request);
     return response.data;
   }
 
@@ -60,7 +60,7 @@ class SpeakingService {
     formDataCorrect.append('transcript', transcript);
     formDataCorrect.append('language', language);
 
-    const response = await api.post('/api/ai/speaking/upload-assess-with-transcript', formDataCorrect, {
+    const response = await api.post('/ai/speaking/upload-assess-with-transcript', formDataCorrect, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

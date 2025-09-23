@@ -12,13 +12,17 @@ interface ListeningInputEditorProps {
   onAnswersChange: (answers: AnswerCreateDto[]) => void;
   audioUrl?: string;
   onAudioChange: (audioFile: File | null, audioUrl: string | null) => void;
+  listeningData?: any;
+  onListeningDataChange?: (data: any) => void;
 }
 
 const ListeningInputEditor: React.FC<ListeningInputEditorProps> = ({
   answers,
   onAnswersChange,
   audioUrl,
-  onAudioChange
+  onAudioChange,
+  listeningData,
+  onListeningDataChange
 }) => {
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(audioUrl || null);
@@ -26,10 +30,20 @@ const ListeningInputEditor: React.FC<ListeningInputEditorProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // TTS controls
-  const [ttsLang, setTtsLang] = useState<string>('en-US');
+  const [ttsText, setTtsText] = useState<string>(listeningData?.ttsText || '');
+  const [ttsLang, setTtsLang] = useState<string>(listeningData?.languageCode || 'en-US');
   const [ttsGender, setTtsGender] = useState<'MALE' | 'FEMALE'>('FEMALE');
-  const [ttsVoice, setTtsVoice] = useState<string>('');
+  const [ttsVoice, setTtsVoice] = useState<string>(listeningData?.voice || '');
   const [loadingTts, setLoadingTts] = useState<boolean>(false);
+
+  // Sync with listeningData when it changes
+  useEffect(() => {
+    if (listeningData) {
+      setTtsText(listeningData.ttsText || '');
+      setTtsLang(listeningData.languageCode || 'en-US');
+      setTtsVoice(listeningData.voice || '');
+    }
+  }, [listeningData]);
 
   // Ensure we have at least one answer
   useEffect(() => {
@@ -119,14 +133,26 @@ const ListeningInputEditor: React.FC<ListeningInputEditorProps> = ({
       {/* TTS Generate (no upload needed) */}
       <div className="space-y-4">
         <Label className="text-lg font-semibold">Tạo audio bằng TTS</Label>
+        <div>
+          <Label className="text-sm">Text cho TTS</Label>
+          <Textarea 
+            value={ttsText} 
+            onChange={(e) => {
+              setTtsText(e.target.value);
+              onListeningDataChange?.({ ...listeningData, ttsText: e.target.value });
+            }} 
+            placeholder="Nhập text để tạo audio (nếu để trống sẽ dùng đáp án)"
+            className="min-h-[80px]"
+          />
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div>
             <Label className="text-sm">Ngôn ngữ (xx-YY)</Label>
-            <Input_admin value={ttsLang} onChange={(e) => setTtsLang(e.target.value || 'en-US')} placeholder="en-US" />
+            <Input_admin value={ttsLang} onChange={(e) => setTtsLang(e.target.value ?? 'en-US')} placeholder="en-US" />
           </div>
           <div>
             <Label className="text-sm">Giọng</Label>
-            <select className="w-full border rounded-lg h-10 px-3" value={ttsGender} onChange={(e) => setTtsGender((e.target.value as 'MALE'|'FEMALE') || 'FEMALE')}>
+            <select className="w-full border rounded-lg h-10 px-3" value={ttsGender} onChange={(e) => setTtsGender((e.target.value as 'MALE'|'FEMALE') ?? 'FEMALE')}>
               <option value="FEMALE">Female</option>
               <option value="MALE">Male</option>
             </select>
@@ -139,8 +165,8 @@ const ListeningInputEditor: React.FC<ListeningInputEditorProps> = ({
         <div className="flex gap-3">
           <Button_admin type="button" disabled={loadingTts}
             onClick={async () => {
-              const text = (answers[0]?.answerText || '').trim();
-              if (!text) { toast.error('Nhập đáp án trước khi tạo TTS', { autoClose: 1200 }); return; }
+              const text = ttsText.trim() || (answers[0]?.answerText || '').trim();
+              if (!text) { toast.error('Nhập text cho TTS trước khi tạo audio', { autoClose: 1200 }); return; }
               try {
                 setLoadingTts(true);
                 const res = await api.get<string>('/tts/synthesize', { params: { text, languageCode: ttsLang, voice: ttsVoice || undefined, gender: ttsGender } });

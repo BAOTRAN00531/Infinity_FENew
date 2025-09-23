@@ -105,7 +105,7 @@ const CourseForm: React.FC<CourseFormProps> = ({ initialData, onSubmit }) => {
           <div className="space-y-2 ">
             <Label htmlFor="language">Language</Label>
             <Select
-                value={formData.language.id?.toString() || ''}
+                value={formData.language.id?.toString() ?? ''}
                 onValueChange={handleLanguageChange}
             >
               <SelectTrigger>
@@ -172,7 +172,7 @@ const CourseForm: React.FC<CourseFormProps> = ({ initialData, onSubmit }) => {
                 id="price"
                 type="number"
                 min={0}
-                value={formData.price}
+                value={formData.price ?? 0}
                 onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
                 placeholder="Nhập giá khóa học"
                 required
