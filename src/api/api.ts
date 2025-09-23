@@ -3,8 +3,8 @@ import axios, { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig, AxiosH
 // Khởi tạo Axios instance
 const isDev = import.meta.env.DEV;
 const api: AxiosInstance = axios.create({
-    // Dev: dùng proxy Vite qua /api → backend, Prod: gọi trực tiếp backend URL
-    baseURL: isDev ? '/api' : (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'),
+    // Dev: tạm thời bypass Vite proxy để test, Prod: gọi trực tiếp backend URL
+    baseURL: isDev ? 'http://localhost:8080/api' : (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'),
     withCredentials: true, // Cho phép gửi cookie (httpOnly)
     headers: { 'Content-Type': 'application/json' },
     timeout: 10000, // Timeout 10s để tránh request treo

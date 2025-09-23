@@ -82,12 +82,12 @@ const PaymentComponent = () => {
     }
 
     if (!planData) {
-      planData = pricingPlans.find(plan => plan.duration === parseInt(duration));
+      planData = pricingPlans.find(plan => plan.duration === (parseInt(duration) ?? 0));
     }
 
     setPlanInfo({
-      duration: parseInt(duration),
-      price: parseInt(price),
+      duration: parseInt(duration) ?? 0,
+      price: parseInt(price) ?? 0,
       planData: planData
     });
   }, [searchParams, navigate]);

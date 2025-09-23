@@ -26,7 +26,7 @@ const LanguageForm: React.FC<LanguageFormProps> = ({ initialData, onSubmit, onCa
     const [templates, setTemplates] = useState<{ name: string; code: string; flag: string }[]>([]);
 
     useEffect(() => {
-        api.get('/api/language-templates')
+        api.get('/language-templates')
             .then(res => setTemplates(res.data))
             .catch(() =>
                 toast.error('Failed to load templates', {

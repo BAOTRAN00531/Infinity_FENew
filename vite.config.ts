@@ -27,12 +27,17 @@ export default defineConfig(({ mode }) => {
                     target: backendUrl,
                     changeOrigin: true,
                     secure: false,
-                    rewrite: (p) => p.replace(/^\/api/, ""),
+                    timeout: 30000,
+                    rewrite: (p) => p, // Giữ nguyên path, không rewrite
                     configure: (proxy) => {
                         proxy.on("proxyReq", (proxyReq) => {
-                            try {
-                                proxyReq.removeHeader("origin");
-                            } catch {}
+                            console.log("Proxy request:", proxyReq.path, proxyReq.getHeaders());
+                        });
+                        proxy.on("proxyRes", (proxyRes) => {
+                            console.log("Proxy response:", proxyRes.statusCode);
+                        });
+                        proxy.on("error", (err) => {
+                            console.log("Proxy error:", err);
                         });
                     },
                 } as ProxyOptions,

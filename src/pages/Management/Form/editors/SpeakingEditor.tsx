@@ -192,8 +192,8 @@ const SpeakingEditor: React.FC<Props> = ({ data, onChange }) => {
         <Label className="text-sm font-medium mb-2 block">Time Limit (seconds, optional)</Label>
         <Input_admin
           type="number"
-          value={data.timeLimit || ''}
-          onChange={(e) => onChange({ ...data, timeLimit: parseInt(e.target.value) || undefined })}
+          value={data.timeLimit ?? ''}
+          onChange={(e) => onChange({ ...data, timeLimit: parseInt(e.target.value) ?? undefined })}
           className="w-full rounded-xl border-2 border-gray-200 h-10 text-base"
           placeholder="e.g., 30 (leave empty for no limit)"
         />
@@ -285,7 +285,7 @@ const SpeakingEditor: React.FC<Props> = ({ data, onChange }) => {
       <div className="mb-4">
         <Label className="text-sm font-medium mb-2 block">Pronunciation Tips (Optional)</Label>
         <Textarea
-          value={data.pronunciationTips || ''}
+          value={data.pronunciationTips ?? ''}
           onChange={(e) => onChange({ ...data, pronunciationTips: e.target.value })}
           className="w-full rounded-xl border-2 border-gray-200 h-16 text-base"
           placeholder="Provide pronunciation tips or common mistakes to avoid..."

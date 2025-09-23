@@ -58,7 +58,7 @@ export const lexiconUnitsApi = {
       total: number;
     };
   }> => {
-    const response = await api.get('/api/lexicon/units');
+    const response = await api.get('/lexicon/units');
     return response.data;
   },
 
@@ -72,7 +72,7 @@ export const lexiconUnitsApi = {
       total: number;
     };
   }> => {
-    const response = await api.get('/api/lexicon/units');
+    const response = await api.get('/lexicon/units');
     return response.data;
   },
 
@@ -86,54 +86,54 @@ export const lexiconUnitsApi = {
       total: number;
     };
   }> => {
-    const response = await api.get('/api/lexicon/phrases');
+    const response = await api.get('/lexicon/phrases');
     return response.data;
   },
 
   // Get by language
   getByLanguage: async (languageCode: string): Promise<LexiconUnitResponse[]> => {
-    const response = await api.get(`/api/lexicon/language/${languageCode}`);
+    const response = await api.get(`/lexicon/language/${languageCode}`);
     return response.data;
   },
 
   // Get vocabulary by language
   getVocabularyByLanguage: async (languageCode: string): Promise<LexiconUnitResponse[]> => {
-    const response = await api.get(`/api/lexicon/language/${languageCode}/units`);
+    const response = await api.get(`/lexicon/language/${languageCode}/units`);
     return response.data;
   },
 
   // Get phrases by language
   getPhrasesByLanguage: async (languageCode: string): Promise<LexiconUnitResponse[]> => {
-    const response = await api.get(`/api/lexicon/language/${languageCode}/phrases`);
+    const response = await api.get(`/lexicon/language/${languageCode}/phrases`);
     return response.data;
   },
 
   // Create new unit
   create: async (unit: LexiconUnitDto, languageCode: string): Promise<LexiconUnitResponse> => {
-    const response = await api.post(`/api/lexicon?languageCode=${languageCode}`, unit);
+    const response = await api.post(`/lexicon?languageCode=${languageCode}`, unit);
     return response.data;
   },
 
   // Update unit
   update: async (id: number, unit: LexiconUnitDto): Promise<LexiconUnitResponse> => {
-    const response = await api.put(`/api/lexicon/${id}`, unit);
+    const response = await api.put(`/lexicon/${id}`, unit);
     return response.data;
   },
 
   // Delete unit
   delete: async (id: number): Promise<void> => {
-    await api.delete(`/api/lexicon/${id}`);
+    await api.delete(`/lexicon/${id}`);
   },
 
   // Generate audio for unit
   generateAudio: async (id: number): Promise<LexiconUnitResponse> => {
-    const response = await api.post(`/api/lexicon/${id}/generate-audio`);
+    const response = await api.post(`/lexicon/${id}/generate-audio`);
     return response.data;
   },
 
   // Generate audio with specific voice
   generateAudioWithVoice: async (id: number, voiceName: string): Promise<LexiconUnitResponse> => {
-    const response = await api.post(`/api/lexicon/${id}/generate-audio-with-voice?voiceName=${voiceName}`);
+    const response = await api.post(`/lexicon/${id}/generate-audio-with-voice?voiceName=${voiceName}`);
     return response.data;
   },
 
@@ -142,7 +142,7 @@ export const lexiconUnitsApi = {
     const params = new URLSearchParams({ q: query });
     if (languageCode) params.append('languageCode', languageCode);
     if (type) params.append('type', type);
-    const response = await api.get(`/api/lexicon/search?${params.toString()}`);
+    const response = await api.get(`/lexicon/search?${params.toString()}`);
     return response.data;
   },
 
@@ -153,19 +153,19 @@ export const lexiconUnitsApi = {
     languageCode?: string;
     type?: string;
   }): Promise<LexiconUnitResponse[]> => {
-    const response = await api.get('/api/lexicon/filter', { params });
+    const response = await api.get('/lexicon/filter', { params });
     return response.data;
   },
 
   // Test endpoint
   test: async (): Promise<string> => {
-    const response = await api.get('/api/lexicon/test');
+    const response = await api.get('/lexicon/test');
     return response.data;
   },
 
   // Get test data
   getTestData: async (): Promise<LexiconUnitResponse[]> => {
-    const response = await api.get('/api/lexicon/test-data');
+    const response = await api.get('/lexicon/test-data');
     return response.data;
   }
 };
@@ -174,13 +174,13 @@ export const lexiconUnitsApi = {
 export const ttsApi = {
   // Basic synthesis
   synthesize: async (text: string): Promise<string> => {
-    const response = await api.get(`/api/tts?synthesize=${encodeURIComponent(text)}`);
+    const response = await api.get(`/tts?synthesize=${encodeURIComponent(text)}`);
     return response.data;
   },
 
   // Synthesize with language
   synthesizeWithLanguage: async (text: string, languageCode: string = 'en-US'): Promise<string> => {
-    const response = await api.get(`/api/tts/synthesize?text=${encodeURIComponent(text)}&languageCode=${languageCode}`);
+    const response = await api.get(`/tts/synthesize?text=${encodeURIComponent(text)}&languageCode=${languageCode}`);
     return response.data;
   },
 
@@ -190,7 +190,7 @@ export const ttsApi = {
     languageCode: string = 'en-US', 
     gender: string = 'NEUTRAL'
   ): Promise<string> => {
-    const response = await api.get(`/api/tts/synthesize-with-gender?text=${encodeURIComponent(text)}&languageCode=${languageCode}&gender=${gender}`);
+    const response = await api.get(`/tts/synthesize-with-gender?text=${encodeURIComponent(text)}&languageCode=${languageCode}&gender=${gender}`);
     return response.data;
   },
 
@@ -200,31 +200,31 @@ export const ttsApi = {
     languageCode: string = 'en-US', 
     voiceName: string
   ): Promise<string> => {
-    const response = await api.get(`/api/tts/synthesize-with-voice?text=${encodeURIComponent(text)}&languageCode=${languageCode}&voiceName=${voiceName}`);
+    const response = await api.get(`/tts/synthesize-with-voice?text=${encodeURIComponent(text)}&languageCode=${languageCode}&voiceName=${voiceName}`);
     return response.data;
   },
 
   // Get available voices
   getAvailableVoices: async (languageCode: string = 'en-US'): Promise<Voice[]> => {
-    const response = await api.get(`/api/tts/voices?languageCode=${languageCode}`);
+    const response = await api.get(`/tts/voices?languageCode=${languageCode}`);
     return response.data;
   },
 
   // Get supported languages
   getSupportedLanguages: async (): Promise<Record<string, string>> => {
-    const response = await api.get('/api/tts/supported-languages');
+    const response = await api.get('/tts/supported-languages');
     return response.data;
   },
 
   // Get supported voices
   getSupportedVoices: async (): Promise<Record<string, string[]>> => {
-    const response = await api.get('/api/tts/voices/supported');
+    const response = await api.get('/tts/voices/supported');
     return response.data;
   },
 
   // Test lexicon TTS
   testLexiconTTS: async (text: string, languageCode: string): Promise<string> => {
-    const response = await api.get(`/api/tts/test-lexicon?text=${encodeURIComponent(text)}&languageCode=${languageCode}`);
+    const response = await api.get(`/tts/test-lexicon?text=${encodeURIComponent(text)}&languageCode=${languageCode}`);
     return response.data;
   }
 };
@@ -243,19 +243,19 @@ export interface Language {
 export const languageApi = {
   // Get all languages
   getAll: async (): Promise<Language[]> => {
-    const response = await api.get('/api/languages');
+    const response = await api.get('/languages');
     return response.data;
   },
 
   // Get language by code
   getByCode: async (code: string): Promise<Language> => {
-    const response = await api.get(`/api/languages/${code}`);
+    const response = await api.get(`/languages/${code}`);
     return response.data;
   },
 
   // Get supported languages for TTS
   getSupportedLanguages: async (): Promise<Language[]> => {
-    const response = await api.get('/api/languages/supported');
+    const response = await api.get('/languages/supported');
     return response.data;
   }
 };
@@ -273,13 +273,13 @@ export const lexiconApi = {
     unitsByLanguage: Record<string, number>;
     phrasesByLanguage: Record<string, number>;
   }> => {
-    const response = await api.get('/api/lexicon/stats');
+    const response = await api.get('/lexicon/stats');
     return response.data;
   }
 };
 // --- AI endpoints ---
 export async function aiSuggest(prefix: string, lang: string, level = 'beginner') {
-  const res = await fetch('/api/ai/lexicon/suggest', {
+  const res = await fetch('/ai/lexicon/suggest', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ prefix, lang, level }),
@@ -289,7 +289,7 @@ export async function aiSuggest(prefix: string, lang: string, level = 'beginner'
 }
 
 export async function aiEnrichWord(text: string, lang: string) {
-  const res = await fetch('/api/ai/lexicon/enrich-word', {
+  const res = await fetch('/ai/lexicon/enrich-word', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ text, lang }),
@@ -308,7 +308,7 @@ export async function getAvailableVoices(languageCode?: string) {
 }
 
 export async function aiAnnotatePhrase(text: string, langSrc: string, langDst = 'vi') {
-  const res = await fetch('/api/ai/lexicon/annotate-phrase', {
+  const res = await fetch('/ai/lexicon/annotate-phrase', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ text, langSrc, langDst }),

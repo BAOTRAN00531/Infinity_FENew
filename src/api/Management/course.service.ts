@@ -9,7 +9,7 @@ import {Course, Language} from '@/api/types';
 export const getCourses = async (): Promise<Course[]> => {
     try {
         console.log('[Course API] Fetching courses from backend...');
-        const res = await api.get<Course[]>('/api/courses');
+        const res = await api.get<Course[]>('/courses');
         console.log('[Course API] Received courses:', res.data);
         return res.data;
     } catch (error) {
@@ -23,7 +23,7 @@ export const getCourses = async (): Promise<Course[]> => {
 export const getLanguages = async (): Promise<Language[]> => {
     try {
         console.log('[Course API] Fetching languages from backend...');
-        const res = await api.get<Language[]>('/api/languages');
+        const res = await api.get<Language[]>('/languages');
         console.log('[Course API] Received languages:', res.data);
         return res.data;
     } catch (error) {
@@ -37,7 +37,7 @@ export const getLanguages = async (): Promise<Language[]> => {
 export const getCourseById = async (id: number): Promise<Course> => {
     try {
         console.log(`[Course API] Fetching course ${id} from backend...`);
-        const res = await api.get<Course>(`/api/courses/${id}`);
+        const res = await api.get<Course>(`/courses/${id}`);
         console.log(`[Course API] Received course:`, res.data);
         return res.data;
     } catch (error) {
@@ -49,7 +49,7 @@ export const getCourseById = async (id: number): Promise<Course> => {
 export const getCoursesByLanguage = async (languageId: number): Promise<Course[]> => {
     try {
         console.log(`[Course API] Fetching courses for language ${languageId} from backend...`);
-        const res = await api.get<Course[]>(`/api/courses/by-language/${languageId}`);
+        const res = await api.get<Course[]>(`/courses/by-language/${languageId}`);
         console.log(`[Course API] Received courses for language:`, res.data);
         return res.data;
     } catch (error) {
@@ -65,7 +65,7 @@ export const createCourse = async (
 ): Promise<void> => {
     try {
         console.log('[Course API] Creating course:', courseData);
-        await api.post('/api/courses', courseData);
+        await api.post('/courses', courseData);
         console.log('[Course API] Course created successfully');
     } catch (error) {
         console.error('[Course API] Error creating course:', error);
@@ -81,7 +81,7 @@ export const updateCourse = async (
 ): Promise<void> => {
     try {
         console.log(`[Course API] Updating course ${id}:`, courseData);
-        await api.put(`/api/courses/${id}`, courseData);
+        await api.put(`/courses/${id}`, courseData);
         console.log(`[Course API] Course ${id} updated successfully`);
     } catch (error) {
         console.error(`[Course API] Error updating course ${id}:`, error);
@@ -93,7 +93,7 @@ export const updateCourse = async (
 export const deleteCourse = async (id: number): Promise<void> => {
     try {
         console.log(`[Course API] Deleting course ${id}...`);
-        await api.delete(`/api/courses/${id}`);
+        await api.delete(`/courses/${id}`);
         console.log(`[Course API] Course ${id} deleted successfully`);
     } catch (error) {
         console.error(`[Course API] Error deleting course ${id}:`, error);

@@ -78,13 +78,13 @@ export type SupportedLanguageCode = keyof typeof SUPPORTED_LANGUAGES;
 export const dictionaryApi = {
   // Main dictionary search endpoint
   search: async (params: DictionarySearchParams): Promise<DictionaryResponse> => {
-    const response = await api.get('/api/dictionary', { params });
+    const response = await api.get('/dictionary', { params });
     return response.data;
   },
 
   // Search with language and word separately
   searchByLanguage: async (languageCode: string, word: string): Promise<DictionaryResponse> => {
-    const response = await api.get('/api/dictionary', {
+    const response = await api.get('/dictionary', {
       params: {
         lang: languageCode,
         word: word
@@ -117,13 +117,13 @@ export const dictionaryApi = {
 
   // Test endpoint
   test: async (): Promise<string> => {
-    const response = await api.get('/api/dictionary/test');
+    const response = await api.get('/dictionary/test');
     return response.data;
   },
 
   // Health check
   health: async (): Promise<{ status: string; timestamp: string }> => {
-    const response = await api.get('/api/dictionary/health');
+    const response = await api.get('/dictionary/health');
     return response.data;
   }
 };

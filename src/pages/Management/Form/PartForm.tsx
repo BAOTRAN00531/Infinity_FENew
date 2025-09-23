@@ -279,7 +279,7 @@ const PartForm: React.FC<PartFormProps> = ({ initialData, onSubmit }) => {
               <Label>Video URL</Label>
               <div className="flex items-center gap-2">
                 <Input_admin
-                    value={formData.videoUrl || ''}
+                    value={formData.videoUrl ?? ''}
                     onChange={e => setFormData(fd => ({ ...fd, videoUrl: e.target.value }))}
                     placeholder="Paste YouTube or other video URL here"
                 />
@@ -299,7 +299,7 @@ const PartForm: React.FC<PartFormProps> = ({ initialData, onSubmit }) => {
               <Label>Content (Document/Text)</Label>
               <div className="flex items-center gap-2">
                 <Textarea
-                    value={formData.content || ''}
+                    value={formData.content ?? ''}
                     onChange={e => setFormData(fd => ({ ...fd, content: e.target.value }))}
                     placeholder="Enter document content here or upload file"
                     rows={4}
@@ -321,7 +321,7 @@ const PartForm: React.FC<PartFormProps> = ({ initialData, onSubmit }) => {
         <div className="space-y-2">
           <Label>Duration (e.g., 5:30 for 5 minutes 30 seconds)</Label>
           <Input_admin
-              value={formData.duration || ''}
+              value={formData.duration ?? ''}
               onChange={e => setFormData(fd => ({ ...fd, duration: e.target.value }))}
               placeholder="e.g., 5:30"
           />
@@ -422,7 +422,7 @@ const PartForm: React.FC<PartFormProps> = ({ initialData, onSubmit }) => {
         <div className="space-y-2">
           <Label>Description</Label>
           <Textarea
-              value={formData.description || ''}
+              value={formData.description ?? ''}
               onChange={e => setFormData(fd => ({ ...fd, description: e.target.value }))}
               placeholder="Mô tả bài học"
               rows={3}

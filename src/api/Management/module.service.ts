@@ -17,7 +17,7 @@ const pendingSingleModuleRequests = new Map<number, Promise<Module>>();
 export const fetchLanguages = async (): Promise<Language[]> => {
     try {
         console.log('[Module API] Fetching languages from backend...');
-        const response = await api.get<Language[]>('/api/languages');
+        const response = await api.get<Language[]>('/languages');
         console.log('[Module API] Received languages:', response.data);
         return response.data;
     } catch (error) {
@@ -29,7 +29,7 @@ export const fetchLanguages = async (): Promise<Language[]> => {
 export const fetchCourses = async (): Promise<Course[]> => {
     try {
         console.log('[Module API] Fetching courses from backend...');
-        const response = await api.get<Course[]>('/api/courses');
+        const response = await api.get<Course[]>('/courses');
         console.log('[Module API] Received courses:', response.data);
         return response.data;
     } catch (error) {
@@ -102,7 +102,7 @@ export const fetchModules = async (courseId?: number): Promise<Module[]> => {
     // Tạo request mới
     const requestPromise = (async () => {
         try {
-            const url = courseId ? `/api/modules?courseId=${courseId}` : '/api/modules';
+            const url = courseId ? `/modules?courseId=${courseId}` : '/modules';
             console.log(`[Module API] Fetching modules from backend: ${url}`);
             const response = await api.get<Module[]>(url);
             const data = response.data;
@@ -136,7 +136,7 @@ export const fetchModules = async (courseId?: number): Promise<Module[]> => {
 export const createModule = async (data: ModuleRequest): Promise<Module> => {
     try {
         console.log('[Module API] Creating module:', data);
-        const response = await api.post<Module>('/api/modules', data);
+        const response = await api.post<Module>('/modules', data);
         console.log('[Module API] Module created successfully:', response.data);
         return response.data;
     } catch (error) {
@@ -178,7 +178,7 @@ export const fetchModuleById = async (id: number): Promise<Module> => {
     // Tạo request mới
     const requestPromise = (async () => {
         try {
-            const response = await api.get<Module>(`/api/modules/${id}`);
+            const response = await api.get<Module>(`/modules/${id}`);
             const data = response.data;
             
             // Cache kết quả

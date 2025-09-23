@@ -7,14 +7,14 @@ import { StudentQuizQuestion, QuizSubmission, QuizResult, SingleQuestionSubmit, 
 export const quizService = {
     // Get quiz questions for a specific lesson
     getQuestions: async (lessonId: number): Promise<StudentQuizQuestion[]> => {
-        const response = await api.get(`/api/student/quiz/lesson/${lessonId}/questions`);
+        const response = await api.get(`/student/quiz/lesson/${lessonId}/questions`);
         return response.data;
     },
 
     // Submit quiz answers
     submitQuiz: async (lessonId: number, answers: Record<number, number>): Promise<QuizResult> => {
         const submission: QuizSubmission = { answers };
-        const response = await api.post(`/api/student/quiz/lesson/${lessonId}/submit`, submission);
+        const response = await api.post(`/student/quiz/lesson/${lessonId}/submit`, submission);
         return response.data;
     },
 
@@ -24,11 +24,11 @@ export const quizService = {
             questionId,
             questionOptionIds: selectedOptionIds
         };
-        const response = await api.post(`/api/student/quiz/question/${questionId}/submit`, submission);
+        const response = await api.post(`/student/quiz/question/${questionId}/submit`, submission);
         return response.data;
     },
 
     // Legacy method - keeping for backward compatibility
     getResults: (quizSessionId: number) =>
-        api.get(`/api/student/quiz/session/${quizSessionId}/results`)
+        api.get(`/student/quiz/session/${quizSessionId}/results`)
 };

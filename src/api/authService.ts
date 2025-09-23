@@ -3,7 +3,9 @@ import { LoginDTO, RegisterDTO, ResLoginDTO } from "@/api/types";
 
 /** Đăng nhập: trả về { access_token, userp } */
 export const login = async (credentials: LoginDTO): Promise<ResLoginDTO> => {
+    console.log("🔍 Login request data:", credentials);
     const response = await api.post<ResLoginDTO>("/auth/login", credentials);
+    console.log("✅ Login response:", response.data);
     return response.data;
 };
 

@@ -14,7 +14,8 @@ import {
     mapUIQuestionToAnswerDto,
 } from '@/api/index';
 
-import api from '@/api/api'; // ✅ Dùng API instance đã config
+import api from '@/api/api';
+import {toast} from "sonner"; // ✅ Dùng API instance đã config
 
 export interface Language {
     id: number;
@@ -25,18 +26,18 @@ export interface Language {
 export type ModuleLite = { id: number; name: string };
 
 export const getQuestionsByLesson = async (lessonId: number): Promise<QuestionResponseDto[]> => {
-    const res = await api.get('/api/questions', { params: { lessonId } });
+    const res = await api.get('/questions', { params: { lessonId } });
     return res.data;
 };
 
 export const getAllQuestions = async (): Promise<QuestionResponseDto[]> => {
-    const res = await api.get('/api/questions/all');
+    const res = await api.get('/questions/all');
     return res.data;
 };
 
 export const fetchModules = async (): Promise<ModuleLite[]> => {
     try {
-        const res = await api.get('/api/courses');
+        const res = await api.get('/courses');
         return res.data.map((m: any) => ({
             id: m.id,
             name: m.name || m.title,
@@ -49,7 +50,7 @@ export const fetchModules = async (): Promise<ModuleLite[]> => {
 
 export const fetchLanguages = async (): Promise<Language[]> => {
     try {
-        const res = await api.get('/api/languages');
+        const res = await api.get('/languages');
         return res.data;
     } catch (error) {
         console.log('[Admin Question API] Using mock data for languages');
@@ -76,7 +77,7 @@ export const fetchModulesByLanguage = async (languageCode: string): Promise<Modu
             courses.map(async (c: any) => {
                 // Try modules?courseId
                 try {
-                    const r1 = await api.get('/api/modules', { params: { courseId: c.id } });
+                    const r1 = await api.get('/modules', { params: { courseId: c.id } });
                     if (Array.isArray(r1.data)) {
                         return r1.data.map((mm: any) => ({ id: mm.id, name: mm.name || mm.title }));
                     }
@@ -96,7 +97,7 @@ export const fetchModulesByLanguage = async (languageCode: string): Promise<Modu
 
     // 1) Try courses with query param
     try {
-        const res = await api.get('/api/courses', { params: { languageCode } });
+        const res = await api.get('/courses', { params: { languageCode } });
         const courses = Array.isArray(res.data) ? res.data : [];
         const filtered = filterCourses(courses);
         if (filtered.length > 0) {
@@ -116,7 +117,7 @@ export const fetchModulesByLanguage = async (languageCode: string): Promise<Modu
 
     // 3) Final fallback: fetch all and filter client-side, then get modules
     try {
-        const res = await api.get('/api/courses');
+        const res = await api.get('/courses');
         const courses = Array.isArray(res.data) ? res.data : [];
         const filtered = filterCourses(courses);
         return await fetchModulesOfCourses(filtered);
@@ -128,7 +129,7 @@ export const fetchModulesByLanguage = async (languageCode: string): Promise<Modu
 
 export async function fetchLessonsByModule(moduleId: number): Promise<Lesson[]> {
     if (!moduleId) return [];
-    const res = await api.get('/api/lessons', { params: { moduleId } });
+    const res = await api.get('/lessons', { params: { moduleId } });
     // đảm bảo dữ liệu là mảng Lesson
     const list = Array.isArray(res.data) ? res.data : [];
     return list.map((x: any) => ({
@@ -138,10 +139,25 @@ export async function fetchLessonsByModule(moduleId: number): Promise<Lesson[]> 
     })) as Lesson[];
   }
 
-export const fetchQuestionsByLesson = async (lessonId: number): Promise<UIQuestion[]> => {
-    const res = await api.get('/api/questions', { params: { lessonId } });
-    return res.data.map(mapQuestionResponseToUIQuestion);
-};
+export async function fetchQuestionsByLesson(lessonId: number) {
+    // Đừng gọi BE nếu id không hợp lệ → tránh 500 rác
+    if (!Number.isFinite(lessonId) || lessonId <= 0) return [];
+
+    try {
+        const res = await api.get(`/admin/questions/lessons/${lessonId}`);
+        // BE của bạn có thể trả {result: []} hoặc [] – bắt cả 2
+        return Array.isArray(res.data) ? res.data : (res.data?.result ?? []);
+    } catch (e: any) {
+        const msg =
+            e?.response?.data?.message ||
+            e?.response?.data?.error ||
+            e?.message ||
+            'Server error';
+        console.error('[fetchQuestionsByLesson] 500:', e?.response?.data || e);
+        toast.error(`Load questions failed: ${msg}`);
+        return []; // Cho UI vẫn chạy
+    }
+}
 
 export const fetchQuestionById = async (id: number): Promise<UIQuestion> => {
     const res = await api.get(`/api/questions/${id}`);
@@ -152,7 +168,7 @@ export const createQuestion = async (form: UIQuestion): Promise<UIQuestion> => {
     const dto = mapUIQuestionToCreateDto(form);
 
     // Gửi câu hỏi chính
-    const res = await api.post('/api/questions', dto);
+    const res = await api.post('/questions', dto);
     const created: QuestionResponseDto = res.data;
     const questionId = created.id;
 
@@ -160,7 +176,7 @@ export const createQuestion = async (form: UIQuestion): Promise<UIQuestion> => {
     if (form.questionTypeId === 4) {
         const answerDtos: AnswerCreateDto[] = mapUIQuestionToAnswerDto(form, questionId);
         for (const a of answerDtos) {
-            await api.post('/api/question-answers', a);
+            await api.post('/question-answers', a);
         }
     } else {
         const optionDtos: OptionCreateDto[] = form.options.map((o) => ({
@@ -170,7 +186,7 @@ export const createQuestion = async (form: UIQuestion): Promise<UIQuestion> => {
             position: o.position,
             imageUrl: o.imageUrl,
         }));
-        await api.post('/api/question-options/batch', optionDtos);
+        await api.post('/question-options/batch', optionDtos);
     }
 
     // Lấy lại câu hỏi vừa tạo (có đầy đủ fields)
