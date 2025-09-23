@@ -244,6 +244,12 @@ const LexiconCRUD = () => {
         difficulty: data.difficulty
       };
 
+      // Hiển thị loading message
+      toast.info("Đang tạo từ vựng... Vui lòng đợi", {
+        autoClose: 3000,
+        hideProgressBar: false
+      });
+
       const response = await lexiconApi.units.create(unitDto, data.language);
       const newUnit = mapResponseToLexiconUnit(response);
       
@@ -253,11 +259,26 @@ const LexiconCRUD = () => {
         setPhrases([...phrases, newUnit]);
       }
       
-      toast.success("Lexicon item created successfully!");
+      // Thông báo thành công
+      toast.success("Từ vựng đã được tạo thành công! Bạn có thể tạo audio sau bằng nút 🎤", {
+        autoClose: 5000
+      });
       setIsCreateOpen(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating lexicon item:', error);
-      toast.error("Failed to create lexicon item. Please try again.");
+      
+      // Xử lý các loại lỗi khác nhau
+      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+        toast.error("Request timeout - TTS service đang xử lý. Vui lòng thử lại sau vài phút.", {
+          autoClose: 10000
+        });
+      } else if (error.response?.status === 500) {
+        toast.error("Lỗi server - Có thể do TTS service. Vui lòng thử lại.", {
+          autoClose: 8000
+        });
+      } else {
+        toast.error("Không thể tạo từ vựng. Vui lòng kiểm tra thông tin và thử lại.");
+      }
     }
   };
 

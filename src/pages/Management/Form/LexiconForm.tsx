@@ -255,9 +255,16 @@ const LexiconForm: React.FC<LexiconFormProps> = ({ onSubmit, initialData, type, 
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    setIsSubmitting(true);
+    try {
+      await onSubmit(formData);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleFileUpload = (field: 'image', file: File) => {
@@ -510,9 +517,17 @@ const LexiconForm: React.FC<LexiconFormProps> = ({ onSubmit, initialData, type, 
       <div className="flex gap-4 pt-4">
         <Button
           type="submit"
-          className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold px-6 py-2 rounded-xl"
+          disabled={isSubmitting}
+          className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold px-6 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {initialData ? 'Update' : 'Create'} {type === 'units' ? 'Word' : 'Phrase'}
+          {isSubmitting ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              {initialData ? 'Updating' : 'Creating'}...
+            </>
+          ) : (
+            `${initialData ? 'Update' : 'Create'} ${type === 'units' ? 'Word' : 'Phrase'}`
+          )}
         </Button>
       </div>
     </form>
