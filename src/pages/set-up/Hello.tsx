@@ -18,9 +18,9 @@ function Hello() {
 
             {/* Gói 2 button chung một flex container */}
             <div className="mt-6 flex flex-col items-center gap-5">
-                <NavLink to="/auth/register">
+                <NavLink to="/select-language">
                     <Button type="primary" className="px-12">
-                        Tôi chưa có tài khoản
+                        Tiếp tục
                     </Button>
                 </NavLink>
 
