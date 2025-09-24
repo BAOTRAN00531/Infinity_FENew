@@ -2,7 +2,7 @@ import Button from "../../components/reuseables/Button";
 import LessonProgressCircle from "../../components/reuseables/LessonCircleProgress";
 import NextLessonBox from "../../components/page-component/base/NextLessonBox";
 import TrialBox from "../../components/page-component/base/TrialBox";
-import {NavLink, useSearchParams} from "react-router-dom";
+import {NavLink, useSearchParams, useNavigate} from "react-router-dom";
 import SidebarAd from "@components/ui/Ads/SidebarAd";
 import {Suspense, useEffect, useState} from "react";
 import {UserLesson} from "@/models/lesson/UserLesson";
@@ -16,6 +16,7 @@ function Learn() {
     const [error, setError] = useState<string | null>(null);
     const [currentModule, setCurrentModule] = useState<Module | null>(null);
     const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
     const courseId = 2
 
     // Get moduleId from URL params or set default
@@ -35,6 +36,11 @@ function Learn() {
                 if (!effectiveModuleId) {
                     effectiveModuleId = await fetchInProgressModuleId(courseId);
                     console.log("Fetched in-progress moduleId:", effectiveModuleId);
+
+                    // Update URL to include the moduleId for better user experience
+                    if (effectiveModuleId) {
+                        navigate(`/hoc?moduleId=${effectiveModuleId}`, { replace: true });
+                    }
                 }
 
                 console.log("Loading lessons for moduleId:", effectiveModuleId);

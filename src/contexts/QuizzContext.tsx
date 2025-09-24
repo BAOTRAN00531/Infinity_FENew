@@ -268,7 +268,7 @@ function reducer(state, action) {
             return {
                 ...state,
                 currentQuestionIndex:
-                    state.currentQuestionIndex < state.questions.length
+                    state.currentQuestionIndex < state.questions.length - 1
                         ? state.currentQuestionIndex + 1
                         : state.currentQuestionIndex,
             };

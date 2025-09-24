@@ -14,6 +14,8 @@ function Footer({ showVocab = false, showToggleVocab = false, onCheckAnswer }) {
       currentQuestionIndex,
       selectedWords,
       hasAnswered,
+      hasChecked,
+      isCorrect,
       textAnswer,
       selectedOptionIds,
       isSubmittingAnswer,
@@ -157,14 +159,24 @@ function Footer({ showVocab = false, showToggleVocab = false, onCheckAnswer }) {
               )}
             </Button>
           ) : null}
-          <Button
-            className="mt-4"
-            type="primary"
-            disabled={!hasAnswered || isSubmittingAnswer}
-            onClick={checkAnswer}
-          >
-            {isSubmittingAnswer ? "Đang kiểm tra..." : "Kiểm tra"}
-          </Button>
+          {!hasChecked ? (
+            <Button
+              className="mt-4"
+              type="primary"
+              disabled={!hasAnswered || isSubmittingAnswer}
+              onClick={checkAnswer}
+            >
+              {isSubmittingAnswer ? "Đang kiểm tra..." : "Kiểm tra"}
+            </Button>
+          ) : (
+            <Button
+              className="mt-4"
+              type="primary"
+              onClick={nextQuestion}
+            >
+              Câu tiếp theo
+            </Button>
+          )}
         </div>
       </div>
     </footer>

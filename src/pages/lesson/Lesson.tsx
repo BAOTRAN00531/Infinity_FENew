@@ -32,17 +32,17 @@ function Lesson() {
     const effectiveQuestions = apiQuestions.length > 0 ? apiQuestions : questions;
     const currentQuestion = effectiveQuestions[currentQuestionIndex];
 
-    // Auto-navigate to the first incomplete question when questions are loaded
+    // Auto-navigate to the first incomplete question when questions are loaded (only initially)
     useEffect(() => {
-        if (effectiveQuestions.length > 0) {
+        if (effectiveQuestions.length > 0 && currentQuestionIndex === 0) {
             const firstIncompleteIndex = effectiveQuestions.findIndex(q => !q.isCompleted);
 
-            // If there's an incomplete question and we're not already on it, navigate to it
-            if (firstIncompleteIndex !== -1 && currentQuestionIndex !== firstIncompleteIndex) {
+            // If there's an incomplete question and we're still on the first question, navigate to it
+            if (firstIncompleteIndex !== -1 && firstIncompleteIndex !== 0) {
                 dispatch({ type: 'SET_CURRENT_QUESTION_INDEX', payload: firstIncompleteIndex });
             }
         }
-    }, [effectiveQuestions, currentQuestionIndex, dispatch]);
+    }, [effectiveQuestions, dispatch]); // Removed currentQuestionIndex from dependencies
 
     // Calculate and update progress whenever effectiveQuestions change
     useEffect(() => {

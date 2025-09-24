@@ -161,6 +161,19 @@ export const deleteModule = async (id: number): Promise<void> => {
     await api.delete(`/modules/${id}`);
 };
 
+export const getInProgressModuleId = async (courseId: number): Promise<number | null> => {
+    try {
+        console.log(`[Module API] Fetching in-progress module for course ${courseId}`);
+        const response = await api.get<number>(`/modules/in-progress?courseId=${courseId}`);
+        console.log(`[Module API] In-progress module ID:`, response.data);
+        return response.data;
+    } catch (error) {
+        console.error(`[Module API] Error fetching in-progress module for course ${courseId}:`, error);
+        // Return null if no in-progress module found or error occurs
+        return null;
+    }
+};
+
 // Thêm hàm này vào file service của module
 export const fetchModuleById = async (id: number): Promise<Module> => {
     // Kiểm tra cache trước
