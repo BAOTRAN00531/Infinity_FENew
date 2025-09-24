@@ -58,7 +58,7 @@ const InvoicePage: React.FC = () => {
             // ✅ Sử dụng hàm API đã định nghĩa
             await cancelOrder(invoice.orderCode);
             toast.success('Huỷ đơn thành công!', { duration: 1200 });
-            setTimeout(() => navigate('/client/order-history'), 1500);
+            setTimeout(() => navigate('/order-history'), 1500);
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 toast.error(err.response?.data?.message || 'Không thể huỷ đơn. Vui lòng thử lại.', { duration: 1200 });

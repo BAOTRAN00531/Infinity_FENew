@@ -1,81 +1,65 @@
-import React, { useState, useEffect, Suspense, lazy } from "react";
-import { useLocation } from "react-router-dom";
-import { UserProfile } from "@/api/user";
-import { useAdvertisements } from "@/api/Ads/useAdvertisements";
-import { jwtDecode } from 'jwt-decode'; // THAY ĐỔI: Thêm import jwt-decode
-
-// THAY ĐỔI: Định nghĩa interface cho DecodedToken giống như trong ProtectedRoute
-interface DecodedToken {
-    role: string;
-    sub: string;
-    exp: number;
-    iat: number;
-}
+import React, { useState, useEffect, Suspense, lazy } from 'react';
+import { useUser } from '@/api/UserContext';
+import { useAdvertisements } from '@/api/Ads/useAdvertisements';
 
 // Lazy load các component quảng cáo
-const RandomAdPopup = lazy(() => import("@components/ui/Ads/RandomAdPopup"));
-const CenterPopupAd = lazy(() => import("@components/ui/Ads/CenterPopupAd"));
-const FixedFooterAd = lazy(() => import("@components/ui/Ads/FixedFooterAd"));
-
-interface AdPopupWrapperProps {
-    userProfile: UserProfile | null;
-    children: React.ReactNode;
-}
+const RandomAdPopup = lazy(() => import('@components/ui/Ads/RandomAdPopup'));
+const FixedFooterAd = lazy(() => import('@components/ui/Ads/FixedFooterAd'));
+const CenterPopupAd = lazy(() => import('@components/ui/Ads/CenterPopupAd')); // Thêm CenterPopupAd
 
 // Fallback khi lazy-loading
 const AdLoadingPlaceholder = () => (
     <div className="hidden">Loading advertisement...</div>
 );
 
-const AdPopupWrapper: React.FC<AdPopupWrapperProps> = ({ userProfile, children }) => {
-    const location = useLocation();
+interface AdPopupWrapperProps {
+    children: React.ReactNode;
+    userProfile: any; // TODO: Định nghĩa type cụ thể cho userProfile
+}
 
-    // Hook kiểm tra điều kiện hiển thị ads
-    let { showAds } = useAdvertisements(userProfile, location.pathname);
-
-    // THAY ĐỔI: Kiểm tra userRole từ token và isVip từ userProfile
-    const token = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
-    let userRole: string | null = null;
-    if (token) {
-        try {
-            const decodedToken: DecodedToken = jwtDecode<DecodedToken>(token);
-            userRole = decodedToken.role;
-        } catch (error) {
-            console.error('Invalid token:', error);
-        }
-    }
-    // Ẩn quảng cáo nếu user là VIP hoặc ROLE_ADMIN
-    if (userProfile?.isVip || userRole === 'ROLE_ADMIN') {
-        showAds = false;
-    }
-
-    const [isRandomPopupVisible, setIsRandomPopupVisible] = useState(false);
-    const [isCenterPopupEnabled, setIsCenterPopupEnabled] = useState(false);
-    const [isFooterAdEnabled, setIsFooterAdEnabled] = useState(false);
+const AdPopupWrapper: React.FC<AdPopupWrapperProps> = ({ children, userProfile }) => {
+    const { showAds } = useAdvertisements();
+    const [adStates, setAdStates] = useState({
+        isRandomPopupVisible: false,
+        isFooterAdEnabled: false,
+        isCenterPopupVisible: false, // Thêm state cho CenterPopupAd
+    });
 
     useEffect(() => {
-        if (showAds) {
-            // Reset popup khi route thay đổi
-            setIsRandomPopupVisible(false);
-
-            // Random delay (4-12 giây) cho popup ngẫu nhiên
-            const randomDelay = Math.random() * 8000 + 4000;
-            const randomTimer = setTimeout(() => {
-                setIsRandomPopupVisible(true);
-            }, randomDelay);
-
-            // Bật các loại quảng cáo khác
-            setIsCenterPopupEnabled(true);
-            setIsFooterAdEnabled(true);
-
-            return () => clearTimeout(randomTimer);
-        } else {
-            // Tắt hết quảng cáo nếu không được hiển thị
-            setIsRandomPopupVisible(false);
-            setIsCenterPopupEnabled(false);
-            setIsFooterAdEnabled(false);
+        // Nếu không hiển thị quảng cáo, tắt tất cả
+        if (!showAds || !userProfile) {
+            setAdStates({
+                isRandomPopupVisible: false,
+                isFooterAdEnabled: false,
+                isCenterPopupVisible: false,
+            });
+            return;
         }
-    }, [showAds, location.pathname]);
+
+        // Reset state khi route thay đổi
+        setAdStates({
+            isRandomPopupVisible: false,
+            isFooterAdEnabled: true, // Footer ad bật ngay
+            isCenterPopupVisible: false, // Center popup sẽ bật sau delay
+        });
+
+        // Random delay (3-5 phút) cho CenterPopupAd
+        const centerPopupDelay = Math.random() * 120000 + 180000; // 180-300 giây
+        const centerPopupTimer = setTimeout(() => {
+            setAdStates(prev => ({ ...prev, isCenterPopupVisible: true }));
+        }, centerPopupDelay);
+
+        // Random delay (4-12 giây) cho RandomAdPopup
+        const randomPopupDelay = Math.random() * 8000 + 4000;
+        const randomPopupTimer = setTimeout(() => {
+            setAdStates(prev => ({ ...prev, isRandomPopupVisible: true }));
+        }, randomPopupDelay);
+
+        return () => {
+            clearTimeout(centerPopupTimer);
+            clearTimeout(randomPopupTimer);
+        };
+    }, [showAds, userProfile]);
 
     return (
         <>
@@ -83,23 +67,29 @@ const AdPopupWrapper: React.FC<AdPopupWrapperProps> = ({ userProfile, children }
             {children}
 
             {/* Random popup */}
-            {isRandomPopupVisible && (
+            {adStates.isRandomPopupVisible && (
                 <Suspense fallback={<AdLoadingPlaceholder />}>
-                    <RandomAdPopup onClose={() => setIsRandomPopupVisible(false)} />
-                </Suspense>
-            )}
-
-            {/* Popup trung tâm */}
-            {isCenterPopupEnabled && (
-                <Suspense fallback={<AdLoadingPlaceholder />}>
-                    <CenterPopupAd />
+                    <RandomAdPopup
+                        onClose={() => setAdStates(prev => ({ ...prev, isRandomPopupVisible: false }))}
+                    />
                 </Suspense>
             )}
 
             {/* Footer ad */}
-            {isFooterAdEnabled && (
+            {adStates.isFooterAdEnabled && (
                 <Suspense fallback={<AdLoadingPlaceholder />}>
-                    <FixedFooterAd onClose={() => setIsFooterAdEnabled(false)} />
+                    <FixedFooterAd
+                        onClose={() => setAdStates(prev => ({ ...prev, isFooterAdEnabled: false }))}
+                    />
+                </Suspense>
+            )}
+
+            {/* Center popup */}
+            {adStates.isCenterPopupVisible && (
+                <Suspense fallback={<AdLoadingPlaceholder />}>
+                    <CenterPopupAd
+                        onClose={() => setAdStates(prev => ({ ...prev, isCenterPopupVisible: false }))}
+                    />
                 </Suspense>
             )}
         </>

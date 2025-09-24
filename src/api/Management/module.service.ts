@@ -55,7 +55,7 @@ export const fetchCoursesByLanguage = async (languageId: number): Promise<Course
     const requestPromise = (async () => {
         try {
             console.log(`[Module API] Fetching courses for language ${languageId} from backend...`);
-            const response = await api.get<Course[]>(`/api/courses/by-language/${languageId}`);
+            const response = await api.get<Course[]>(`/courses/by-language/${languageId}`);
             const data = response.data;
             console.log(`[Module API] Received courses for language:`, data);
             
