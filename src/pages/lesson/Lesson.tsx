@@ -45,6 +45,30 @@ function Lesson() {
         }
     }, [effectiveQuestions, dispatch]); // Removed currentQuestionIndex from dependencies
 
+    // Sync apiQuestions with context questions when they are updated
+    useEffect(() => {
+        // If we have apiQuestions and context questions are updated, sync the completion status
+        if (apiQuestions.length > 0 && questions.length > 0) {
+            const updatedApiQuestions = apiQuestions.map(apiQuestion => {
+                const contextQuestion = questions.find(q => q.id === apiQuestion.id);
+                if (contextQuestion && contextQuestion.isCompleted !== apiQuestion.isCompleted) {
+                    return { ...apiQuestion, isCompleted: contextQuestion.isCompleted };
+                }
+                return apiQuestion;
+            });
+
+            // Only update if there were changes
+            const hasChanges = updatedApiQuestions.some((q, index) =>
+                q.isCompleted !== apiQuestions[index].isCompleted
+            );
+
+            if (hasChanges) {
+                console.log('Syncing completion status between context and local state');
+                setApiQuestions(updatedApiQuestions);
+            }
+        }
+    }, [questions, apiQuestions]);
+
     // Calculate and update progress whenever effectiveQuestions change
     useEffect(() => {
         if (effectiveQuestions.length > 0) {
