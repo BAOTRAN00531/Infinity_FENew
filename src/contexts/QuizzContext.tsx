@@ -16,7 +16,10 @@ const QUESTION_TYPES = {
 
 export enum IMPLEMENTED_QUESTION_TYPE {
     MULTIPLE_SINGLE_CHOICE = 'multiple_choice_single',
-    MULTIPLE_CHOICE_MULTI = 'multiple_choice_multi'
+    MULTIPLE_CHOICE_MULTI = 'multiple_choice_multi',
+    TEXT_INPUT = 'text_input',
+    FILL_IN_THE_BLANK = 'fill_in_the_blank',
+    MATCHING = 'matching'
 }
 
 const lesson = {
@@ -225,12 +228,19 @@ const lesson = {
     ],
 };
 
+// Helper function to calculate progress based on completed questions
+const calculateProgress = (questions) => {
+    if (!questions || questions.length === 0) return 0;
+    const completedCount = questions.filter(q => q.isCompleted).length;
+    return Math.round((completedCount / questions.length) * 100);
+};
+
 const initialState = {
     lesson,
     questions: lesson.questions,
     currentQuestionIndex: 0,
     useVocab: false,
-    progress: 12,
+    progress: calculateProgress(lesson.questions),
     selectedWords: [],
     textAnswer: "",
     audioBlob: null,
@@ -246,7 +256,14 @@ const initialState = {
 function reducer(state, action) {
     switch (action.type) {
         case "SET_QUESTIONS":
-            return {...state, questions: action.payload};
+            const newQuestions = action.payload;
+            return {
+                ...state,
+                questions: newQuestions,
+                progress: calculateProgress(newQuestions)
+            };
+        case "SET_CURRENT_QUESTION_INDEX":
+            return {...state, currentQuestionIndex: action.payload};
         case "NEXT_QUESTION":
             return {
                 ...state,
@@ -318,6 +335,22 @@ function reducer(state, action) {
             return {
                 ...state,
                 isSubmittingAnswer: action.payload,
+            };
+        case "UPDATE_QUESTION_COMPLETION":
+            const updatedQuestions = state.questions.map(q =>
+                q.id === action.payload.questionId
+                    ? { ...q, isCompleted: action.payload.isCompleted }
+                    : q
+            );
+            return {
+                ...state,
+                questions: updatedQuestions,
+                progress: calculateProgress(updatedQuestions)
+            };
+        case "SET_PROGRESS":
+            return {
+                ...state,
+                progress: action.payload
             };
         default:
             return state;

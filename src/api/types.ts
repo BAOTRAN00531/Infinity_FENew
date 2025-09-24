@@ -255,6 +255,9 @@ export interface BaseModule {
 // Module - Phiên bản đầy đủ với duration (match với API response)
 export interface Module extends BaseModule {
     duration: string | null; // ✅ Có thể null, match với API
+    progressPercentage?: number;
+    completedQuestions?: number;
+    totalQuestions?: number;
 }
 
 // Module - Phiên bản cho học tập

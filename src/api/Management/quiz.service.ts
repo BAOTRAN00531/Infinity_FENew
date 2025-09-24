@@ -19,11 +19,18 @@ export const quizService = {
     },
 
     // Submit single question answer
-    submitSingleQuestion: async (questionId: number, selectedOptionIds: number[]): Promise<SingleQuestionSubmitResponse> => {
-        const submission: SingleQuestionSubmit = {
+    submitSingleQuestion: async (questionId: number, selectedOptionIds: number[], textAnswer?: string): Promise<SingleQuestionSubmitResponse> => {
+        const submission: any = {
             questionId,
-            questionOptionIds: selectedOptionIds
         };
+
+        // Handle text input questions differently
+        if (textAnswer !== undefined) {
+            submission.answerText = textAnswer;
+        } else {
+            submission.questionOptionIds = selectedOptionIds;
+        }
+
         const response = await api.post(`/student/quiz/question/${questionId}/submit`, submission);
         return response.data;
     },

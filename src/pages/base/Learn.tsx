@@ -18,8 +18,7 @@ function Learn() {
     const [searchParams] = useSearchParams();
 
     // Get moduleId from URL params or set default
-    const urlModuleId = searchParams.get('moduleId') ? parseInt(searchParams.get('moduleId')!) : null;
-    const moduleId = (urlModuleId && urlModuleId >= 1 && urlModuleId <= 10) ? urlModuleId : 2;
+    const moduleId = parseInt(searchParams.get('moduleId')!);
 
     useEffect(() => {
         const loadData = async () => {
@@ -27,13 +26,13 @@ function Learn() {
                 setLoading(true);
                 setError(null);
                 console.log('Loading lessons for moduleId:', moduleId);
-                
+
                 // Load both lessons and module info
                 const [lessonsData, moduleData] = await Promise.all([
                     fetchUserLesson(moduleId),
                     fetchModuleById(moduleId)
                 ]);
-                
+
                 setLessons(lessonsData);
                 setCurrentModule(moduleData);
             } catch (error) {

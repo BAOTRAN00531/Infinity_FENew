@@ -8,6 +8,9 @@ import Rearrange from "../../components/page-component/lesson/quizz/Rearrange";
 import SingleImage from "../../components/page-component/lesson/quizz/SingleImage";
 import MultipleSingleChoiceQuestion from "@components/page-component/lesson/quizz/MultipleSingleChoiceQuestion";
 import SpeakingQuiz from "../../components/page-component/lesson/quizz/SpeakingQuiz";
+import TextInput from "../../components/page-component/lesson/quizz/TextInput";
+import FillInTheBlankInput from "../../components/page-component/lesson/quizz/FillInTheBlankInput";
+import SimpleMatchingInput from "../../components/page-component/lesson/quizz/SimpleMatchingInput";
 import {IMPLEMENTED_QUESTION_TYPE, useQuizz} from "../../contexts/QuizzContext";
 import {quizService} from "../../api/Management/quiz.service";
 import {StudentQuizQuestion} from "../../api/types";
@@ -28,6 +31,31 @@ function Lesson() {
     // Use API questions if available, otherwise fall back to context questions
     const effectiveQuestions = apiQuestions.length > 0 ? apiQuestions : questions;
     const currentQuestion = effectiveQuestions[currentQuestionIndex];
+
+    // Auto-navigate to the first incomplete question when questions are loaded
+    useEffect(() => {
+        if (effectiveQuestions.length > 0) {
+            const firstIncompleteIndex = effectiveQuestions.findIndex(q => !q.isCompleted);
+
+            // If there's an incomplete question and we're not already on it, navigate to it
+            if (firstIncompleteIndex !== -1 && currentQuestionIndex !== firstIncompleteIndex) {
+                dispatch({ type: 'SET_CURRENT_QUESTION_INDEX', payload: firstIncompleteIndex });
+            }
+        }
+    }, [effectiveQuestions, currentQuestionIndex, dispatch]);
+
+    // Calculate and update progress whenever effectiveQuestions change
+    useEffect(() => {
+        if (effectiveQuestions.length > 0) {
+            const completedCount = effectiveQuestions.filter(q => q.isCompleted).length;
+            const progressPercentage = Math.round((completedCount / effectiveQuestions.length) * 100);
+
+            // Update progress in context if it's different
+            if (dispatch) {
+                dispatch({ type: 'SET_PROGRESS', payload: progressPercentage });
+            }
+        }
+    }, [effectiveQuestions, dispatch]);
 
     // Fetch quiz questions from API when component mounts
     useEffect(() => {
@@ -62,7 +90,7 @@ function Lesson() {
                         })) || [],
                         answers: q.answers || [],
                         media: q.media,
-                        isCompleted: q.isCompleted
+                        isCompleted: q.completed
                     };
                 });
 
@@ -141,6 +169,15 @@ function Lesson() {
 
             case IMPLEMENTED_QUESTION_TYPE.MULTIPLE_CHOICE_MULTI:
                 return <MultipleSingleChoiceQuestion/>; // For now, use same component
+
+            case IMPLEMENTED_QUESTION_TYPE.TEXT_INPUT:
+                return <TextInput/>;
+
+            case IMPLEMENTED_QUESTION_TYPE.FILL_IN_THE_BLANK:
+                return <FillInTheBlankInput/>;
+
+            case IMPLEMENTED_QUESTION_TYPE.MATCHING:
+                return <Matching/>;
 
             case QUESTION_TYPES["MATCHING"]:
                 return <Matching/>;

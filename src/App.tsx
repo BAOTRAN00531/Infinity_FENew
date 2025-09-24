@@ -94,9 +94,9 @@ function AuthGuard() {
                 ) {
                     navigate('/admin/dashboard', { replace: true });
                 }
-            } else if (decoded.role === 'ROLE_STUDENT' || decoded.role === 'ROLE_USER') {
-                if (path.startsWith('/admin')) {
-                    navigate('/hoc', { replace: true });
+            } else if (decoded.role === "ROLE_STUDENT" || decoded.role === "ROLE_USER") {
+                if (path.startsWith("/admin")) {
+                    navigate("/hoc-phan", { replace: true });
                 }
             }
         } catch (e) {
