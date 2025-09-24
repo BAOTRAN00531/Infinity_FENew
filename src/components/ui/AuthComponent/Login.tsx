@@ -58,8 +58,8 @@ export default function Login() {
             };
 
             // Lưu token và user data vào sessionStorage
-            sessionStorage.setItem("access_token", res.access_token);
-            sessionStorage.setItem("user", JSON.stringify(userWithRole));
+            localStorage.setItem("access_token", res.access_token);
+            localStorage.setItem("user", JSON.stringify(userWithRole));
 
             console.log("Login successful:", { role, user: userWithRole });
 
