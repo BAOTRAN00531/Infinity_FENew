@@ -13,7 +13,7 @@ export const createVipOrder = async (
     data: CreateVipOrderRequest
 ): Promise<OrderResponse> => {
     try {
-        const response = await api.post<OrderResponse>("/api/orders/activate-vip", data);
+        const response = await api.post<OrderResponse>("/orders/activate-vip", data);
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -60,7 +60,7 @@ export const getOrderStatus = async (
  */
 export const cancelOrder = async (orderCode: string): Promise<void> => {
     try {
-        await api.post(`/api/orders/cancel?orderCode=${orderCode}`, {});
+        await api.post(`/orders/cancel?orderCode=${orderCode}`, {});
     } catch (error) {
         if (axios.isAxiosError(error)) {
             console.error("Lỗi Axios khi hủy đơn hàng:", error.response);
@@ -81,7 +81,7 @@ export const getOrderDetails = async (
     orderCode: string
 ): Promise<OrderResponse> => {
     try {
-        const response = await api.get<OrderResponse>(`/api/orders/code/${orderCode}`);
+        const response = await api.get<OrderResponse>(`/orders/code/${orderCode}`);
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -102,7 +102,7 @@ export const getOrderDetails = async (
 export const getOrderHistory = async (status?: string): Promise<OrderResponse[]> => {
     try {
         const response = await api.get<OrderResponse[]>(
-            `/api/orders/history`,
+            `/orders/history`,
             {
                 params: { status }
             }

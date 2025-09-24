@@ -1,3 +1,4 @@
+// src/api/UserContext.tsx
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { UserProfile } from '@/api/user';
 import { getStoredToken } from "@/utils/authUtils";
@@ -7,23 +8,21 @@ interface UserContextType {
     userProfile: UserProfile | null;
     loading: boolean;
     error: Error | null;
-    refetchProfile: () => void;
+    refetchProfile: () => Promise<void>; // Thêm Promise để có thể await
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider = ({ children }: { children: React.ReactNode }) => {
+export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
-    const [token, setToken] = useState(getStoredToken()); // THAY ĐỔI: Theo dõi token
 
     const loadProfile = async () => {
         const currentToken = getStoredToken();
         if (!currentToken) {
             setUserProfile(null);
             setLoading(false);
-            setToken(null);
             return;
         }
 
@@ -32,34 +31,35 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             const data = await fetchUserProfile();
             setUserProfile(data);
             setError(null);
-            setToken(currentToken);
         } catch (err) {
             console.error("Lỗi khi tải thông tin người dùng:", err);
             setError(err as Error);
             setUserProfile(null);
-            setToken(null);
         } finally {
             setLoading(false);
         }
     };
 
-    // THAY ĐỔI: Theo dõi thay đổi token
+    // Theo dõi thay đổi token
     useEffect(() => {
         loadProfile();
+
         // Lắng nghe sự kiện storage để phát hiện thay đổi token
         const handleStorageChange = () => {
-            const newToken = getStoredToken();
-            if (newToken !== token) {
-                loadProfile();
-            }
+            loadProfile();
         };
+
         window.addEventListener('storage', handleStorageChange);
         return () => window.removeEventListener('storage', handleStorageChange);
     }, []);
 
-    const refetchProfile = () => {
-        setUserProfile(null);
-        loadProfile();
+    // Cập nhật refetchProfile để trả về Promise
+    const refetchProfile = async () => {
+        try {
+            await loadProfile();
+        } catch (err) {
+            console.error("Lỗi khi tải lại thông tin người dùng:", err);
+        }
     };
 
     const value = { userProfile, loading, error, refetchProfile };

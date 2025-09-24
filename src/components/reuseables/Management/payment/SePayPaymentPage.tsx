@@ -63,7 +63,7 @@ const SepayPaymentPage = () => {
         const fetchPaymentInfo = async () => {
             try {
                 console.log("Gọi API lấy thông tin thanh toán Sepay");
-                const res = await api.get(`/api/sepay/pay?orderCode=${orderCode}`);
+                const res = await api.get(`/sepay/pay?orderCode=${orderCode}`);
                 console.log("Thông tin thanh toán nhận được:", res.data);
                 setPaymentInfo(res.data);
             } catch (err) {
@@ -78,7 +78,7 @@ const SepayPaymentPage = () => {
         const checkPaymentStatus = async () => {
             try {
                 console.log("Kiểm tra trạng thái thanh toán...");
-                const res = await api.get(`/api/sepay/status?orderCode=${orderCode}`);
+                const res = await api.get(`/sepay/status?orderCode=${orderCode}`);
                 console.log("Payment status from backend:", res.data.status);
 
                 const status = res.data?.status;
