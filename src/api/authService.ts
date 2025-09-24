@@ -98,7 +98,7 @@ export const checkUsernameExists = async (
 export const startGoogleOAuth = () => {
     const isDev = import.meta.env.DEV;
     const base = isDev
-        ? "/api"
+        ? "http://localhost:8080/api"
         : import.meta.env.VITE_BACKEND_URL || "http://localhost:8080";
     window.location.href = `${base}/oauth2/authorization/google`;
 };
@@ -106,7 +106,7 @@ export const startGoogleOAuth = () => {
 export const startFacebookOAuth = () => {
     const isDev = import.meta.env.DEV;
     const base = isDev
-        ? "/api"
+        ? "http://localhost:8080/api"
         : import.meta.env.VITE_BACKEND_URL || "http://localhost:8080";
     window.location.href = `${base}/oauth2/authorization/facebook`;
 };

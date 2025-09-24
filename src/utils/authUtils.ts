@@ -70,6 +70,7 @@ export const hasRole = (allowedRoles: string[]): boolean => {
 export const clearAuthData = (): void => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('user');
+    // Xóa cả sessionStorage để đảm bảo tương thích ngược
     sessionStorage.removeItem('access_token');
     sessionStorage.removeItem('user');
 };

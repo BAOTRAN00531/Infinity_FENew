@@ -39,17 +39,9 @@ const OAuth2RedirectHandler: React.FC<OAuth2RedirectHandlerProps> = ({ className
                     role: role
                 };
 
-                // Lưu token và user data
-                const rememberMe = localStorage.getItem('rememberMe') === 'true';
-                if (rememberMe) {
-                    localStorage.setItem('access_token', token);
-                    localStorage.setItem('user', JSON.stringify(user));
-                    sessionStorage.setItem('access_token', token);
-                    sessionStorage.setItem('user', JSON.stringify(user));
-                } else {
-                    sessionStorage.setItem('access_token', token);
-                    sessionStorage.setItem('user', JSON.stringify(user));
-                }
+                // Lưu token và user data vào localStorage
+                localStorage.setItem('access_token', token);
+                localStorage.setItem('user', JSON.stringify(user));
 
                 console.log("OAuth2 login successful:", { role, user });
 

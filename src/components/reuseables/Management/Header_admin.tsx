@@ -57,7 +57,7 @@ export default function Header({ welcomeMessage }: HeaderProps) {
         localStorage.clear();
         sessionStorage.clear();
         document.cookie = "refresh_token=; Max-Age=0; path=/";
-        navigate("/login");
+        navigate("/auth/login");
     };
 
     return (
@@ -132,7 +132,7 @@ export default function Header({ welcomeMessage }: HeaderProps) {
                             <FancyButton
                                 text="Đăng nhập"
                                 variant="primary"
-                                onClick={() => navigate("/login")}
+                                onClick={() => navigate("/auth/login")}
                                 className="w-full sm:w-auto"
                             />
                             <FancyButton
