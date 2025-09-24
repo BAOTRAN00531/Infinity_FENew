@@ -6,7 +6,7 @@ import {NavLink, useSearchParams} from "react-router-dom";
 import SidebarAd from "@components/ui/Ads/SidebarAd";
 import {Suspense, useEffect, useState} from "react";
 import {UserLesson} from "@/models/lesson/UserLesson";
-import {fetchUserLesson} from "@/services/userLessonService";
+import {fetchInProgressModuleId, fetchUserLesson} from "@/services/userLessonService";
 import {fetchModuleById} from "@/api/Management/module.service";
 import {Module} from "@/api/types";
 
@@ -16,9 +16,12 @@ function Learn() {
     const [error, setError] = useState<string | null>(null);
     const [currentModule, setCurrentModule] = useState<Module | null>(null);
     const [searchParams] = useSearchParams();
+    const courseId = 2
 
     // Get moduleId from URL params or set default
-    const moduleId = parseInt(searchParams.get('moduleId')!);
+    let moduleId = searchParams.get("moduleId")
+        ? parseInt(searchParams.get("moduleId")!)
+        : undefined;
 
     useEffect(() => {
         const loadData = async () => {
@@ -27,10 +30,19 @@ function Learn() {
                 setError(null);
                 console.log('Loading lessons for moduleId:', moduleId);
 
+                // If no moduleId from search params, fetch the in-progress one
+                let effectiveModuleId = moduleId;
+                if (!effectiveModuleId) {
+                    effectiveModuleId = await fetchInProgressModuleId(courseId);
+                    console.log("Fetched in-progress moduleId:", effectiveModuleId);
+                }
+
+                console.log("Loading lessons for moduleId:", effectiveModuleId);
+
                 // Load both lessons and module info
                 const [lessonsData, moduleData] = await Promise.all([
-                    fetchUserLesson(moduleId),
-                    fetchModuleById(moduleId)
+                    fetchUserLesson(effectiveModuleId),
+                    fetchModuleById(effectiveModuleId)
                 ]);
 
                 setLessons(lessonsData);
