@@ -1,30 +1,42 @@
+// src/api/Ads/useAdvertisements.ts
+
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { UserProfile } from '@/api/user';
+import { useUser } from '@/api/UserContext';
+import { getUserRole } from '@/utils/authUtils';
 
-export const useAdvertisements = (userProfile: UserProfile | null, pathname: string) => {
+// src/api/Ads/useAdvertisements.ts
+export const useAdvertisements = () => {
     const location = useLocation();
+    const { userProfile, loading } = useUser();
     const [showAds, setShowAds] = useState(false);
 
     const includedRoutes = [
         '/phat-am',
         '/hoc',
         '/hoc-phan',
+        '/',          // Thêm
+        '/courses',   // Thêm
+        '/lessons',   // Thêm
+        '/profile',   // Thêm
     ];
 
     useEffect(() => {
-        const isAllowedRoute = includedRoutes.some(route => location.pathname.startsWith(route)) ||
-            location.pathname.startsWith('/lession') ||
-            (location.pathname === '/hoc' && location.search.includes('moduleId='));
+        if (loading) {
+            return;
+        }
 
-        // THAY ĐỔI: Cập nhật showAds dựa trên userProfile?.isVip
-        const shouldShowAds = userProfile && !userProfile.isVip && isAllowedRoute;
+        const isVip = userProfile?.isVip ?? false;
+        const userRole = getUserRole();
+        const isUserEntitled = isVip || userRole === 'ROLE_ADMIN';
+        const isAllowedRoute = includedRoutes.some(route => location.pathname.startsWith(route));
+        const shouldShowAds = !isUserEntitled && isAllowedRoute;
 
-        setShowAds(!!shouldShowAds);
-    }, [location.pathname, location.search, userProfile, userProfile?.isVip]); // THAY ĐỔI: Thêm userProfile?.isVip vào dependencies
+        setShowAds(shouldShowAds);
+    }, [location.pathname, userProfile, loading]);
 
     return {
         showAds,
-        includedRoutes
+        includedRoutes,
     };
 };

@@ -11,11 +11,12 @@ import Button from "../../reuseables/Button";
 import {
     Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input"; // đồng bộ import
+import { Input } from "@/components/ui/input";
 import FooterForm from "../../auth-component/FormAuthComponent/FooterForm";
 import { login } from "@/api/authService";
 import { UserLogin, ResLoginDTO } from "@/api/types";
 import { getRedirectPathByRole, clearAuthData } from "@/utils/authUtils";
+import { useUser } from "@/api/UserContext"; // THÊM: Import useUser hook
 
 const formSchema = z.object({
     name_7276315374: z.string().min(1, "Vui lòng nhập email hoặc số điện thoại"),
@@ -25,6 +26,7 @@ const formSchema = z.object({
 export default function Login() {
     const navigate = useNavigate();
     const location = useLocation();
+    const { refetchProfile } = useUser(); // THÊM: Lấy refetchProfile từ context
     const form = useForm({
         resolver: zodResolver(formSchema),
         mode: "onBlur",
@@ -44,12 +46,15 @@ export default function Login() {
                 username: values.name_7276315374,
                 password: values.name_4761952747,
             };
-            
+
             const res: ResLoginDTO = await login(credentials);
-            
+
             // Decode token để lấy role
             const decodedToken: any = jwtDecode(res.access_token);
             const role: string = decodedToken.role;
+
+            // Lưu token vào sessionStorage
+            // sessionStorage.setItem("access_token", res.access_token);
 
             // Tạo user object với role
             const userWithRole: UserLogin = {
@@ -57,11 +62,18 @@ export default function Login() {
                 role,
             };
 
-            // Lưu token và user data vào sessionStorage
+            // Lưu user data vào sessionStorage
+            // sessionStorage.setItem("user", JSON.stringify(userWithRole));
+
             localStorage.setItem("access_token", res.access_token);
             localStorage.setItem("user", JSON.stringify(userWithRole));
 
+
+
             console.log("Login successful:", { role, user: userWithRole });
+
+            // THÊM: Tải lại thông tin người dùng để cập nhật context với đầy đủ thông tin (bao gồm isVip)
+            await refetchProfile();
 
             toast.success("Đăng nhập thành công!");
 
@@ -77,12 +89,12 @@ export default function Login() {
 
             // Chuyển hướng
             navigate(redirectPath, { replace: true });
-            
+
         } catch (error) {
             console.error("Login error", error);
             const message = error?.response?.data?.message || "Tên đăng nhập hoặc mật khẩu sai. Vui lòng thử lại.";
             toast.error(message);
-            
+
             // Xóa dữ liệu auth cũ nếu có lỗi
             clearAuthData();
         }

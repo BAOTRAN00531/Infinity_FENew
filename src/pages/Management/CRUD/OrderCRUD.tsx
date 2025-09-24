@@ -71,7 +71,7 @@ const OrderCRUD = () => {
     }, []);
 
     const handleApprove = (orderCode: string) => {
-        api.post(`/api/admin/approve?orderCode=${orderCode}`)
+        api.post(`/admin/approve?orderCode=${orderCode}`)
             .then(() => {
                 toast.success('Đơn đã được duyệt', {
                     autoClose: 1200,
@@ -87,7 +87,7 @@ const OrderCRUD = () => {
     };
 
     const handleDelete = (orderCode: string) => {
-        api.delete(`/api/admin/delete/${orderCode}`)
+        api.delete(`/admin/delete/${orderCode}`)
             .then(() => {
                 toast.success("Đã xóa đơn hàng", {
                     autoClose: 1200,

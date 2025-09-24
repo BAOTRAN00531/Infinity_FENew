@@ -75,7 +75,7 @@ export const fetchPartById = async (id: number): Promise<Part> => {
     const requestPromise = (async () => {
         try {
             console.log(`[Parts API] Fetching part ${id} from backend...`);
-            const response = await api.get<Part>(`/api/lessons/${id}`);
+            const response = await api.get<Part>(`/lessons/${id}`);
             const data = response.data;
             console.log(`[Parts API] Received part:`, data);
             

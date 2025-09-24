@@ -170,9 +170,9 @@ function Profile() {
                                 <h1 className="uppercase font-black text-center md:text-left">{userProfile.fullName || userProfile.username}</h1>
                                 <div className="w-full flex flex-col items-center md:items-start md:flex-row md:justify-between">
                                     <p>{userProfile.username}</p>
-                                    <p>
-                                        Tham gia từ tháng 8/2023
-                                    </p>
+                                    {/*<p>*/}
+                                    {/*    Tham gia từ tháng 8/2023*/}
+                                    {/*</p>*/}
                                 </div>
                             </div>
                         </div>

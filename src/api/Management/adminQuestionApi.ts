@@ -84,7 +84,7 @@ export const fetchModulesByLanguage = async (languageCode: string): Promise<Modu
                 } catch (_) {}
                 // Try modules/by-course/:id
                 try {
-                    const r2 = await api.get(`/api/modules/by-course/${c.id}`);
+                    const r2 = await api.get(`/modules/by-course/${c.id}`);
                     if (Array.isArray(r2.data)) {
                         return r2.data.map((mm: any) => ({ id: mm.id, name: mm.name || mm.title }));
                     }
@@ -107,7 +107,7 @@ export const fetchModulesByLanguage = async (languageCode: string): Promise<Modu
 
     // 2) Try courses by-language route
     try {
-        const res = await api.get(`/api/courses/by-language/${encodeURIComponent(languageCode)}`);
+        const res = await api.get(`/courses/by-language/${encodeURIComponent(languageCode)}`);
         const courses = Array.isArray(res.data) ? res.data : [];
         const filtered = filterCourses(courses);
         if (filtered.length > 0) {
@@ -160,7 +160,7 @@ export async function fetchQuestionsByLesson(lessonId: number) {
 }
 
 export const fetchQuestionById = async (id: number): Promise<UIQuestion> => {
-    const res = await api.get(`/api/questions/${id}`);
+    const res = await api.get(`/questions/${id}`);
     return mapQuestionResponseToUIQuestion(res.data);
 };
 
@@ -190,7 +190,7 @@ export const createQuestion = async (form: UIQuestion): Promise<UIQuestion> => {
     }
 
     // Lấy lại câu hỏi vừa tạo (có đầy đủ fields)
-    const finalRes = await api.get(`/api/questions/${questionId}`);
+    const finalRes = await api.get(`/questions/${questionId}`);
     return mapQuestionResponseToUIQuestion(finalRes.data);
 };
 
