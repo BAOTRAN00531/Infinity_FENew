@@ -11,20 +11,27 @@ export const fetchUserLesson = async (moduleId: number): Promise<UserLesson[]> =
     } catch (error) {
         // Silently fallback to mock data to avoid console spam
         console.log(`[Lessons API] Using mock data for moduleId: ${moduleId}`);
-        
+
         // Fallback to mock data for testing
         return generateMockLessons(moduleId);
     }
 };
 
+export const fetchInProgressModuleId = async (courseId: number): Promise<number> => {
+    const response = await api.get("/modules/in-progress", {
+        params: {courseId}
+    });
+    return response.data;
+};
+
 // Mock data generator for testing
 const generateMockLessons = (moduleId: number): UserLesson[] => {
     const lessonTemplates = [
-        { title: "Giới thiệu cơ bản", description: "Học những kiến thức cơ bản", icon: "📚" },
-        { title: "Từ vựng quan trọng", description: "Mở rộng vốn từ vựng", icon: "📖" },
-        { title: "Ngữ pháp cơ bản", description: "Nắm vững ngữ pháp", icon: "✏️" },
-        { title: "Luyện tập", description: "Thực hành kiến thức", icon: "🎯" },
-        { title: "Kiểm tra", description: "Đánh giá kết quả học tập", icon: "📝" }
+        {title: "Giới thiệu cơ bản", description: "Học những kiến thức cơ bản", icon: "📚"},
+        {title: "Từ vựng quan trọng", description: "Mở rộng vốn từ vựng", icon: "📖"},
+        {title: "Ngữ pháp cơ bản", description: "Nắm vững ngữ pháp", icon: "✏️"},
+        {title: "Luyện tập", description: "Thực hành kiến thức", icon: "🎯"},
+        {title: "Kiểm tra", description: "Đánh giá kết quả học tập", icon: "📝"}
     ];
 
     return lessonTemplates.map((template, index) => ({
