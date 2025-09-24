@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {Navigate, useParams} from "react-router-dom";
+import {Navigate, useParams, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import AudioQuizz from "../../components/page-component/lesson/quizz/AudioQuizz";
 import FillInTheBlank from "../../components/page-component/lesson/quizz/FillInTheBlank";
@@ -18,6 +18,7 @@ import LessonLayout from "./Layout";
 
 function Lesson() {
     const {id} = useParams();
+    const navigate = useNavigate();
     const lessonId = id ? parseInt(id) : null;
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -56,6 +57,20 @@ function Lesson() {
             }
         }
     }, [effectiveQuestions, dispatch]);
+
+    // Check if all questions are completed and redirect to /hoc
+    useEffect(() => {
+        if (effectiveQuestions.length > 0) {
+            const allCompleted = effectiveQuestions.every(q => q.isCompleted);
+            const isAtEndOfQuestions = currentQuestionIndex >= effectiveQuestions.length;
+
+            // If all questions are completed OR we've reached the end of questions, redirect to /hoc
+            if (allCompleted || isAtEndOfQuestions) {
+                console.log('All questions completed, redirecting to /hoc');
+                navigate('/hoc', { replace: true });
+            }
+        }
+    }, [effectiveQuestions, currentQuestionIndex, navigate]);
 
     // Fetch quiz questions from API when component mounts
     useEffect(() => {

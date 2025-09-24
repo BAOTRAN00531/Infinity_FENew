@@ -20,6 +20,7 @@ function Footer({ showVocab = false, showToggleVocab = false, onCheckAnswer }) {
       selectedOptionIds,
       isSubmittingAnswer,
     },
+    dispatch,
     toggleUseVocab,
     addWord,
     removeWord,
@@ -78,6 +79,15 @@ function Footer({ showVocab = false, showToggleVocab = false, onCheckAnswer }) {
 
         console.log('API Response:', response);
         setChecked(response.correct);
+
+        // Mark question as completed if answer is correct
+        if (response.correct) {
+          console.log('Marking question as completed:', currentQuestion.id);
+          dispatch({
+            type: 'UPDATE_QUESTION_COMPLETION',
+            payload: { questionId: currentQuestion.id, isCompleted: true }
+          });
+        }
       } catch (error) {
         console.error('Failed to submit answer:', error);
         // Fallback to local checking if API fails
