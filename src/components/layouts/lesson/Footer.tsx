@@ -42,18 +42,37 @@ function Footer({ showVocab = false, showToggleVocab = false, onCheckAnswer }) {
   const checkAnswer = async () => {
     // Check if this is a new implemented question type that should use API
     if (currentQuestion.type === IMPLEMENTED_QUESTION_TYPE.MULTIPLE_SINGLE_CHOICE ||
-        currentQuestion.type === IMPLEMENTED_QUESTION_TYPE.MULTIPLE_CHOICE_MULTI) {
+        currentQuestion.type === IMPLEMENTED_QUESTION_TYPE.MULTIPLE_CHOICE_MULTI ||
+        currentQuestion.type === IMPLEMENTED_QUESTION_TYPE.TEXT_INPUT ||
+        currentQuestion.type === IMPLEMENTED_QUESTION_TYPE.FILL_IN_THE_BLANK ||
+        currentQuestion.type === IMPLEMENTED_QUESTION_TYPE.MATCHING) {
       try {
         setSubmittingAnswer(true);
-        console.log('Submitting answer via API:', {
-          questionId: currentQuestion.id,
-          selectedOptionIds
-        });
 
-        const response = await quizService.submitSingleQuestion(
-          currentQuestion.id,
-          selectedOptionIds
-        );
+        // Handle different question types
+        let response;
+        if (currentQuestion.type === IMPLEMENTED_QUESTION_TYPE.TEXT_INPUT ||
+            currentQuestion.type === IMPLEMENTED_QUESTION_TYPE.FILL_IN_THE_BLANK) {
+          console.log('Submitting text answer via API:', {
+            questionId: currentQuestion.id,
+            textAnswer: textAnswer,
+            questionType: currentQuestion.type
+          });
+          response = await quizService.submitSingleQuestion(
+            currentQuestion.id,
+            [], // Empty array for option IDs
+            textAnswer // Pass text answer as third parameter
+          );
+        } else {
+          console.log('Submitting answer via API:', {
+            questionId: currentQuestion.id,
+            selectedOptionIds
+          });
+          response = await quizService.submitSingleQuestion(
+            currentQuestion.id,
+            selectedOptionIds
+          );
+        }
 
         console.log('API Response:', response);
         setChecked(response.correct);

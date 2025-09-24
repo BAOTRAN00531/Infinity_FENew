@@ -72,7 +72,7 @@ export default function Login() {
             if (role === 'ROLE_ADMIN' && !redirectPath.startsWith('/admin')) {
                 redirectPath = '/admin/dashboard';
             } else if ((role === 'ROLE_STUDENT' || role === 'ROLE_USER') && redirectPath.startsWith('/admin')) {
-                redirectPath = '/hoc';
+                redirectPath = '/hoc-phan';
             }
 
             // Chuyển hướng

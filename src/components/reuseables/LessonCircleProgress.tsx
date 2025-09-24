@@ -92,7 +92,7 @@ export default function MyArcProgress({...props}) {
                             </p>
                             <NavLink to={props?.to || `/lesson/${props?.lesson?.id}`} className={"block"}>
                                 <Button type="secondary" className="max-w-full w-full">
-                                    {props.lesson.progress > 0 ? "Học lại" : "Học ngay"}
+                                    {props.lesson.progress >= 100 ? "Học lại" : "Học"}
                                 </Button>
                             </NavLink>
                         </PopoverContent>

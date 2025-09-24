@@ -41,7 +41,7 @@ const AuthHeader: React.FC<AuthHeaderProps> = ({ className = "" }) => {
         if (userRole === "ROLE_ADMIN") {
             navigate("/admin/dashboard");
         } else {
-            navigate("/hoc");
+            navigate("/hoc-phan");
         }
         setShowUserMenu(false);
     };

@@ -65,32 +65,36 @@ function StudyPart() {
         // Sắp xếp modules theo order
         const sortedModules = allModules.sort((a, b) => a.order - b.order);
         
-        // Xác định trạng thái cho từng module dựa trên thứ tự và trạng thái từ database
+        // Xác định trạng thái cho từng module dựa trên progress
         const formattedModules = sortedModules.map((module, index) => {
-          // Tìm vị trí của module active cuối cùng trước module hiện tại
-          const activeModules = sortedModules.filter((m, i) => i < index && m.status === "active");
-          const lastCompletedIndex = activeModules.length > 0 
-            ? sortedModules.indexOf(activeModules[activeModules.length - 1]) 
-            : -1;
-          
           let status;
-          if (module.status === "active") {
-            // Nếu module đã hoàn thành (active), hiển thị dấu tick
+          const progressPercentage = module.progressPercentage || 0;
+
+          if (progressPercentage >= 100) {
+            // Module đã hoàn thành 100%
             status = "done";
-          } else if (index === 0 || (lastCompletedIndex !== -1 && index === lastCompletedIndex + 1)) {
-            // Module đầu tiên hoặc module ngay sau module đã hoàn thành cuối cùng sẽ ở trạng thái "đang làm"
+          } else if (progressPercentage > 0) {
+            // Module đang thực hiện (có progress > 0 nhưng < 100)
             status = "in-progress";
           } else {
-            // Các module còn lại sẽ ở trạng thái "chưa bắt đầu"
-            status = "not-started";
+            // Kiểm tra xem có phải module đầu tiên hoặc module trước đã hoàn thành không
+            const previousModule = index > 0 ? sortedModules[index - 1] : null;
+            if (index === 0 || (previousModule && (previousModule.progressPercentage || 0) >= 100)) {
+              status = "in-progress"; // Module có thể bắt đầu
+            } else {
+              status = "not-started"; // Module chưa thể bắt đầu
+            }
           }
-          
+
           return {
             id: module.id,
             title: module.name || "Module không có tên",
             styles: moduleColors[index % moduleColors.length],
             status: status,
             description: module.description || "",
+            progressPercentage: progressPercentage,
+            completedQuestions: module.completedQuestions || 0,
+            totalQuestions: module.totalQuestions || 0,
           };
         });
         
@@ -134,33 +138,53 @@ function StudyPart() {
                 key={module.id || index}
                 to={`/hoc?moduleId=${module.id}`}
                 className={cn([
-                  "flex items-center justify-between rounded-2xl p-3 gap-8",
+                  "flex flex-col rounded-2xl p-3 gap-2",
                   module.styles,
                   module.status === "not-started" && "opacity-50",
                 ])}
               >
-                <h2 className="be-vietnam-pro-black text-base leading-6 uppercase text-white">
-                  {/* Tự động đánh số thứ tự phần dựa trên index */}
-                  {`PHẦN ${index + 1}: ${module.title.toUpperCase()}`}
-                </h2>
-                <div className="flex-center p-2.5 rounded-2xl bg-white/10">
-                  {module.status === "done" && (
-                    <CheckIcon size={36} strokeWidth={4} className="text-white" />
-                  )}
-                  {module.status === "in-progress" && (
-                    <LoaderIcon
-                      size={36}
-                      strokeWidth={4}
-                      className="text-white"
-                    />
-                  )}
-                  {module.status === "not-started" && (
-                    <CircleDashedIcon
-                      size={36}
-                      strokeWidth={4}
-                      className="text-white"
-                    />
-                  )}
+                <div className="flex items-center justify-between gap-8">
+                  <h2 className="be-vietnam-pro-black text-base leading-6 uppercase text-white">
+                    {/* Tự động đánh số thứ tự phần dựa trên index */}
+                    {`PHẦN ${index + 1}: ${module.title.toUpperCase()}`}
+                  </h2>
+                  <div className="flex-center p-2.5 rounded-2xl bg-white/10">
+                    {module.status === "done" && (
+                      <CheckIcon size={36} strokeWidth={4} className="text-white" />
+                    )}
+                    {module.status === "in-progress" && (
+                      <LoaderIcon
+                        size={36}
+                        strokeWidth={4}
+                        className="text-white"
+                      />
+                    )}
+                    {module.status === "not-started" && (
+                      <CircleDashedIcon
+                        size={36}
+                        strokeWidth={4}
+                        className="text-white"
+                      />
+                    )}
+                  </div>
+                </div>
+
+                {/* Progress Information */}
+                <div className="flex items-center justify-between text-white/90 text-sm">
+                  <span>
+                    {module.completedQuestions}/{module.totalQuestions} câu hỏi
+                  </span>
+                  <span className="font-bold">
+                    {Math.round(module.progressPercentage || 0)}%
+                  </span>
+                </div>
+
+                {/* Progress Bar */}
+                <div className="w-full bg-white/20 rounded-full h-2">
+                  <div
+                    className="bg-white rounded-full h-2 transition-all duration-300"
+                    style={{ width: `${module.progressPercentage || 0}%` }}
+                  />
                 </div>
               </NavLink>
             ))}

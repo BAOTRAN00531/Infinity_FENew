@@ -2,7 +2,7 @@
 import { useQuizz } from "../../../contexts/QuizzContext";
 
 function ProgressBar() {
-  const { state: progress } = useQuizz();
+  const { state: { progress } } = useQuizz();
 
   return (
     <div
